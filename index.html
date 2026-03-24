@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VaultSecurity - Private Space</title>
+    <!-- Use a modern font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link id="dynamic-theme" rel="stylesheet" href="css/style.css">
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+<body>
+    <div id="app-background"></div>
+
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="overlay active">
+        <div class="glass-panel login-box">
+            <ion-icon name="lock-closed" class="lock-icon"></ion-icon>
+            <h1>VaultSecurity</h1>
+            <p>Bóveda ultra-privada cifrada localmente.</p>
+            <input type="password" id="master-password" placeholder="Contraseña Maestra..." autocomplete="off">
+            <button id="btn-login" class="btn-primary">Desbloquear Bóveda</button>
+            <div id="login-error" class="hidden text-danger" style="margin-top:10px">Contraseña incorrecta. (Admin: admin)</div>
+        </div>
+    </div>
+
+    <!-- Main Shell -->
+    <div id="app-shell" class="hidden">
+        <nav class="sidebar glass-panel">
+            <div class="brand">
+                <ion-icon name="shield-checkmark"></ion-icon>
+                <span>Vault</span>
+            </div>
+            <ul class="nav-links">
+                <li data-target="dashboard" class="active"><ion-icon name="grid"></ion-icon> Panel Inicial</li>
+                <li data-target="documents"><ion-icon name="folder-open"></ion-icon> Archivos</li>
+                <li data-target="galleries"><ion-icon name="images"></ion-icon> Galería</li>
+                <li data-target="notes"><ion-icon name="journal"></ion-icon> Bloc de Notas</li>
+                <li data-target="converters"><ion-icon name="sync"></ion-icon> Conversores</li>
+            </ul>
+            <div class="sidebar-bottom">
+                <li data-target="settings"><ion-icon name="settings"></ion-icon> Ajustes Generales</li>
+                <li id="btn-lock"><ion-icon name="log-out"></ion-icon> Bloquear</li>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="top-header glass-panel">
+                <div class="breadcrumb" id="current-section-title">Panel Inicial</div>
+                <div class="header-tools">
+                    <div class="search-bar" title="Fondo Individual de esta pestaña">
+                        <ion-icon name="image-outline"></ion-icon>
+                        <input type="text" placeholder="URL para Fondo" id="local-bg-input" style="width: 120px;">
+                        <button class="tool-btn" id="btn-pick-local-bg" title="Subir Fondo Local desde PC"><ion-icon name="folder-open"></ion-icon></button>
+                    </div>
+                    <div class="timers">
+                        <div class="internal-clock" id="internal-clock" title="Hora">00:00:00</div>
+                        <div class="countdown-timer text-danger" id="countdown-timer" title="Cierre automático">05:00</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="sections-container glass-panel">
+                
+                <section id="section-dashboard" class="app-section active">
+                    <h2>Bienvenido a tu Bóveda</h2>
+                    <p>Todo está cifrado en formato AES 256. Máxima protección.</p>
+                    <div class="stats-grid" id="dashboard-stats">
+                        <div class="stat-card">
+                            <ion-icon name="document-text"></ion-icon>
+                            <h3 id="stat-docs">0 Archivos</h3>
+                        </div>
+                        <div class="stat-card">
+                            <ion-icon name="images"></ion-icon>
+                            <h3 id="stat-imgs">0 Imágenes</h3>
+                        </div>
+                        <div class="stat-card">
+                            <ion-icon name="journal"></ion-icon>
+                            <h3 id="stat-notes">0 Notas</h3>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="section-documents" class="app-section hidden">
+                    <div class="section-header">
+                        <h2>Explorador de Archivos</h2>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-primary" onclick="openCreateModal('folder')"><ion-icon name="add"></ion-icon> Nueva Carpeta</button>
+                            <button class="btn-secondary btn-dash-multi" data-type="folder"><ion-icon name="checkbox-outline"></ion-icon> MODO SELECCIÓN</button>
+                            <button class="btn-secondary danger hidden btn-dash-del" data-type="folder"><ion-icon name="trash"></ion-icon></button>
+                        </div>
+                    </div>
+                    <div class="category-grid" id="folders-grid"></div>
+                </section>
+
+                <section id="section-galleries" class="app-section hidden">
+                    <div class="section-header">
+                        <h2>Álbumes Fotográficos</h2>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-primary" onclick="openCreateModal('album')"><ion-icon name="add"></ion-icon> Nuevo Álbum</button>
+                            <button class="btn-secondary btn-dash-multi" data-type="album"><ion-icon name="checkbox-outline"></ion-icon> MODO SELECCIÓN</button>
+                            <button class="btn-secondary danger hidden btn-dash-del" data-type="album"><ion-icon name="trash"></ion-icon></button>
+                        </div>
+                    </div>
+                    <div class="category-grid" id="albums-grid"></div>
+                </section>
+                
+                <section id="section-notes" class="app-section hidden">
+                    <div class="section-header">
+                        <h2>Grupos de Notas Seguras</h2>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-primary" onclick="openCreateModal('note')"><ion-icon name="add"></ion-icon> Nuevo Grupo</button>
+                            <button class="btn-secondary btn-dash-multi" data-type="note"><ion-icon name="checkbox-outline"></ion-icon> MODO SELECCIÓN</button>
+                            <button class="btn-secondary danger hidden btn-dash-del" data-type="note"><ion-icon name="trash"></ion-icon></button>
+                        </div>
+                    </div>
+                    <div class="category-grid" id="notes-grid"></div>
+                </section>
+
+                <section id="section-folder-view" class="app-section hidden">
+                    <div class="section-header">
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-secondary" id="btn-back-folders"><ion-icon name="arrow-back"></ion-icon> Volver</button>
+                            <button class="btn-secondary" id="btn-edit-folder"><ion-icon name="create"></ion-icon> Propiedades</button>
+                            <button class="btn-secondary danger" id="btn-delete-folder"><ion-icon name="trash"></ion-icon></button>
+                        </div>
+                        <h2 id="current-folder-title" style="flex:1; text-align:center;">Carpeta</h2>
+                        
+                        <!-- Acciones Base -->
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-primary" id="btn-upload-docs" style="display:none;"><ion-icon name="cloud-upload"></ion-icon> Subir Documentos</button>
+                            <button class="btn-primary" id="btn-upload-imgs" style="display:none;"><ion-icon name="images"></ion-icon> Subir Varias Imágenes</button>
+                            <button class="btn-primary" id="btn-new-note-item" style="display:none;"><ion-icon name="add"></ion-icon> Crear Nota</button>
+                            
+                            <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.2); margin: 0 5px; align-self:center;"></div>
+                            
+                            <!-- Multi Select Actions -->
+                            <button class="btn-secondary" id="btn-toggle-multi"><ion-icon name="checkbox-outline"></ion-icon> Modo Selección</button>
+                            <button class="btn-secondary danger hidden" id="btn-delete-multi"><ion-icon name="trash-bin"></ion-icon> Eliminar Seleccionados (<span id="multi-count">0</span>)</button>
+                        </div>
+                    </div>
+
+                    <div class="folder-content" id="selectable-container">
+                        <div class="file-list" id="current-folder-docs"></div>
+                        <div class="image-grid" id="current-folder-imgs"></div>
+                        <div class="category-grid" id="current-folder-notes" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));"></div>
+                    </div>
+                </section>
+
+                <section id="section-notepad-editor" class="app-section hidden">
+                    <div class="section-header">
+                        <button class="btn-secondary" id="btn-back-to-group"><ion-icon name="arrow-back"></ion-icon> Volver</button>
+                        <h2 id="current-note-title">Nota Activa</h2>
+                        <div style="display:flex; gap:10px;">
+                            <span id="note-saving-indicator" class="hidden" style="color:var(--text-muted); align-self:center;">Guardando...</span>
+                            <button class="btn-primary" id="btn-save-note"><ion-icon name="save"></ion-icon> Guardar</button>
+                            <button class="btn-secondary" id="btn-export-note"><ion-icon name="download"></ion-icon></button>
+                        </div>
+                    </div>
+                    <div class="editor-toolbar glass-panel">
+                        <select id="font-select" class="tool-select"><option value="Arial">Arial</option></select>
+                        <select id="format-select" class="tool-select">
+                            <option value="P">Normal</option>
+                            <option value="H1">Título Gigante</option>
+                            <option value="H2">Subtítulo</option>
+                        </select>
+                        <button class="tool-btn" data-cmd="bold" title="Negrita"><b>B</b></button>
+                        <button class="tool-btn" data-cmd="italic" title="Cursiva"><i>I</i></button>
+                        <button class="tool-btn" data-cmd="underline" title="Subrayado" style="text-decoration: underline;">U</button>
+                        <button class="tool-btn" data-cmd="insertUnorderedList" title="Lista Viñetas"><ion-icon name="list"></ion-icon></button>
+                        <button class="tool-btn" data-cmd="insertOrderedList" title="Lista Números"><ion-icon name="list-outline"></ion-icon></button>
+                        
+                        <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.2); margin: 0 5px;"></div>
+                    </div>
+                    <div id="rich-editor" class="glass-input rich-editor" contenteditable="true" spellcheck="false" style="color:white;"></div>
+                </section>
+
+                <section id="section-converters" class="app-section hidden">
+                    <h2>Conversor / Exportador Offline</h2>
+                    <p style="color:var(--text-muted); margin-bottom: 20px;">Solo opciones básicas de imagen debido al modo sin red.</p>
+                    
+                    <div class="glass-panel" style="padding: 40px; text-align: center; border-radius: 12px; width: 60%; margin: 0 auto;">
+                        <ion-icon name="images" style="font-size: 60px; color: var(--primary-color); margin-bottom: 20px;"></ion-icon>
+                        <h3 style="margin-bottom: 20px;">Sube tu archivo para convertir</h3>
+                        <button class="btn-primary" id="btn-conv-pick-file" style="margin: 0 auto 15px auto; width: 60%;"><ion-icon name="attach"></ion-icon> Seleccionar Archivo Original</button>
+                        <p id="conv-sel-file" style="font-size:14px; color:var(--text-muted); margin-bottom: 30px;">(Ninguno seleccionado)</p>
+                        
+                        <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; max-width: 400px; margin: 0 auto;" id="conv-options-box" class="hidden">
+                            <button class="btn-secondary conv-opt" data-type="img-jpeg" style="width:45%">A Jpeg</button>
+                            <button class="btn-secondary conv-opt" data-type="img-png" style="width:45%">A Png</button>
+                            <button class="btn-secondary conv-opt" data-type="img-webp" style="width:45%">A WebP</button>
+                            <button class="btn-secondary conv-opt" data-type="img-svg" style="width:45%">A Svg</button>
+                            <button class="btn-secondary conv-opt" data-type="txt-word" style="width:45%">A Word</button>
+                            <button class="btn-secondary conv-opt" data-type="txt-pdf" style="width:45%">A PDF</button>
+                        </div>
+                    </div>
+                </section>
+                <section id="section-settings" class="app-section hidden">
+                    <h2>Ajustes Maestros</h2>
+                    <p style="font-size:12px; color:var(--text-muted);" id="settings-save-notice"></p>
+                    
+                    <div class="settings-group mt-3" style="border: 1px solid var(--glass-border); padding: 20px; border-radius: 8px;">
+                        <h3 style="color: var(--primary-color); margin-bottom: 15px;"><ion-icon name="color-palette"></ion-icon> Aspecto y Apariencia</h3>
+                        <label>Fondo de Bóveda Global (URL o Local)</label>
+                        <div style="display:flex; gap:10px; margin-bottom: 15px;">
+                            <input type="text" id="setting-bg" class="glass-input" placeholder="Ej: #1a1a2e o https://.." style="margin:0;">
+                            <button class="btn-secondary" id="btn-pick-global-bg" style="width:150px;"><ion-icon name="folder-open"></ion-icon> Buscar Local</button>
+                        </div>
+                        
+                        <label class="mt-3">Color Primario (Tema Principal)</label>
+                        <input type="color" id="setting-theme" class="glass-input" value="#00ffcc" style="width: 100px; height: 40px; padding:0; cursor:pointer;">
+                        
+                        <label class="mt-3">Añadir Ícono Personalizado a la App (.png)</label>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-secondary" id="btn-pick-app-icon" style="width:200px;"><ion-icon name="image"></ion-icon> Subir Ícono (.png)</button>
+                            <button class="btn-secondary" id="btn-reset-app-icon" style="width:200px; border-color:var(--danger);"><ion-icon name="trash"></ion-icon> Quitar Ícono Custom</button>
+                        </div>
+                        
+                        <hr style="border-color:var(--glass-border); margin: 20px 0;">
+                        <button class="btn-primary" id="btn-save-appearance">Aplicar Apariencia</button>
+                    </div>
+                    
+                    <div class="settings-group mt-3" style="border: 1px solid var(--danger); padding: 20px; border-radius: 8px;">
+                        <h3 class="text-danger" style="margin-bottom:15px"><ion-icon name="shield"></ion-icon> Configuración de Seguridad</h3>
+                        <label>Tiempo de Auto-Cierre por Inactividad (Minutos)</label>
+                        <input type="number" id="setting-timeout" class="glass-input" value="5" min="1" max="60">
+                        <button class="btn-primary mt-3" id="btn-save-sec">Aplicar Seguridad</button>
+                    </div>
+
+                    <div class="settings-group mt-3" style="border: 1px solid white; padding: 20px; border-radius: 8px;">
+                        <h3 class="text-main" style="margin-bottom:15px"><ion-icon name="key"></ion-icon> Cambiar Contraseña Maestra</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom:15px;">Cambia tu clave si sientes que fue comprometida. Necesitas conocer la actual.</p>
+                        
+                        <input type="password" id="pwd-old" placeholder="Contraseña Actual..." autocomplete="off">
+                        <input type="password" id="pwd-new" placeholder="Nueva Contraseña..." autocomplete="off">
+                        <input type="password" id="pwd-confirm" placeholder="Confirma la Nueva Contraseña..." autocomplete="off">
+                        <button class="btn-primary" id="btn-change-pwd">Cambiar y Guardar Contraseña</button>
+                    </div>
+
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="cat-password-modal" class="overlay hidden">
+        <div class="glass-panel login-box">
+            <h3><ion-icon name="lock-closed"></ion-icon> Validar Acceso</h3>
+            <input type="password" id="cat-password" placeholder="Contraseña de Carpeta..." autocomplete="off">
+            <div id="cat-error" class="hidden text-danger" style="margin-bottom: 15px;">Dato erróneo.</div>
+            <div class="modal-actions">
+                <button id="btn-cat-cancel" class="btn-secondary">Cancelar</button>
+                <button id="btn-cat-unlock" class="btn-primary">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-folder-modal" class="overlay hidden">
+        <div class="glass-panel login-box" style="width: 450px;">
+            <h3 id="modal-folder-title">Editar / Nuevo Grupo</h3>
+            <input type="text" id="folder-name" placeholder="Nombre">
+            <input type="password" id="folder-pass" placeholder="Contraseña de Carpeta (Opcional)">
+            
+            <label style="text-align:left; display:block; margin-top:10px; font-size:12px; color:var(--text-muted);">Ícono de Carpeta (Opcional, Subir PC)</label>
+            <div style="display:flex; gap:10px; margin-bottom: 15px;">
+                <input type="text" id="folder-icon" placeholder="Ícono predeterminado (o foto)" disabled>
+                <button class="btn-secondary" id="btn-pick-folder-icon" style="width:80px;"><ion-icon name="image"></ion-icon></button>
+            </div>
+            
+            <label style="text-align:left; display:block; font-size:12px; color:var(--text-muted);">Fondo al entrar a la Carpeta (Opcional, Subir PC)</label>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="folder-bg" placeholder="No afecta si vacío" disabled>
+                <button class="btn-secondary" id="btn-pick-folder-bg" style="width:80px;"><ion-icon name="folder-open"></ion-icon></button>
+            </div>
+
+            <div class="modal-actions mt-3">
+                <button id="btn-folder-cancel" class="btn-secondary">Cancelar</button>
+                <button id="btn-folder-save" class="btn-primary">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="export-auth-modal" class="overlay hidden">
+        <div class="glass-panel login-box">
+            <h3 class="text-danger"><ion-icon name="shield"></ion-icon> AUTORIZACIÓN </h3>
+            <p style="font-size:12px">Contraseña Maestra requerida para exportar o eliminar el/los archivo/s:</p>
+            <input type="password" id="export-password" placeholder="Maestra..." autocomplete="off">
+            <div id="export-error" class="hidden text-danger" style="margin-bottom: 15px;">Incorrecto.</div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="document.getElementById('export-auth-modal').classList.add('hidden')">Cancelar</button>
+                <button class="btn-primary" id="btn-export-confirm">Ejecutar Acción</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="note-name-modal" class="overlay hidden">
+        <div class="glass-panel login-box">
+            <h3>Título de la Nota</h3>
+            <input type="text" id="new-note-title" placeholder="Ej: Receta, Contraseñas...">
+            <div class="modal-actions mt-3">
+                <button class="btn-secondary" onclick="document.getElementById('note-name-modal').classList.add('hidden')">Cancelar</button>
+                <button class="btn-primary" id="btn-note-create-confirm">Crear</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas for converting images -->
+    <canvas id="conversion-canvas" class="hidden"></canvas>
+
+    <script src="js/renderer.js"></script>
+</body>
+</html>

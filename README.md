@@ -94,49 +94,51 @@ Plataforma:   Windows 10/11+
 
 ## 📥 Instalación
 
-### 👤 Para Usuarios Comunes (Sin Conocimientos Técnicos)
+### 👤 Para Usuarios Normales (Recomendado)
 
-1. Ve a la pestaña **[Releases](../../releases)** en GitHub
-2. Descarga el archivo: `VaultSecurity Setup 1.0.0.exe`
-3. Haz doble clic en el instalador
-4. Sigue los pasos de instalación (Next → Next → Finish)
-5. ¡Listo! VaultSecurity estará disponible en tu menú de inicio
+¡No necesitas saber programar ni instalar herramientas de desarrollo!
 
-**No necesitas instalar Node.js ni nada adicional.** Funciona como cualquier aplicación nativa de Windows.
+1. Ve a la sección **[Releases](../../releases)** a la derecha de este repositorio en GitHub.
+2. Descarga **únicamente** el archivo que dice **`VaultSecurity Setup X.X.X.exe`** (el Instalador oficial).
+3. Haz doble clic en el instalador descargado.
+4. ¡Listo! VaultSecurity se instalará automáticamente y aparecerá un acceso directo en tu escritorio.
+
+> **⚠️ IMPORTANTE:** *Nunca descargues el código fuente (el botón verde "Code -> Download ZIP") ni intentes abrir un ejecutable "suelto" sin usar el Instalador Oficial.* Hacer eso causará errores de librerías faltantes como `La ejecución de código no puede continuar porque no se encontró ffmpeg.dll`. Siempre instala el programa usando el **Setup.exe** oficial desde la pestaña Releases.
 
 ---
 
-### 👨‍💻 Para Desarrolladores (Acceso al Código Fuente)
+### 👨‍💻 Para Desarrolladores (Código Fuente)
+
+Si quieres modificar el código o crear tu propia versión desde cero:
 
 #### Requisitos Previos
-- **Node.js** v16+ ([Descargar aquí](https://nodejs.org/))
+- **Node.js** v16 o superior ([Descargar aquí](https://nodejs.org/))
 - **Git** ([Descargar aquí](https://git-scm.com/))
-- Un editor de código (VS Code recomendado)
 
-#### Pasos de Instalación
-
-**1. Clonar el repositorio**
+#### Pasos para compilar
+1. Clona este repositorio y entra a la carpeta:
 ```bash
 git clone https://github.com/JuanEstebanHerreraH/VaultSecurity.git
 cd VaultSecurity
 ```
 
-**2. Instalar dependencias**
+2. Instala las dependencias necesarias:
 ```bash
 npm install
 ```
 
-**3. Iniciar en modo desarrollo**
+3. Inicia la aplicación en modo desarrollo para hacer pruebas:
 ```bash
 npm start
 ```
 
-**4. Compilar tu propio instalador .exe**
+4. **Crear el Instalador (`.exe`)**:
 ```bash
 npm run dist
 ```
+> **Nota para desarrolladores en Windows:** Si al ejecutar `npm run dist` te sale un error de *"Cannot create symbolic link"*, debes abrir tu terminal como **Administrador** o activar el **Modo de programador** en la Configuración de Windows.
 
-El archivo `.exe` compilado estará en la carpeta `dist/`.
+Al terminar de compilar, el instalador final aparecerá dentro de la nueva carpeta `dist/` (se llamará algo como `VaultSecurity Setup X.X.X.exe`). **Este archivo "Setup" es el único que debes subir a la sección "Releases" de GitHub para que los usuarios lo descarguen.**
 
 ---
 

@@ -101,7 +101,7 @@ Plataforma:   Windows 10/11+
 *(Contraseña de prueba: admin, Cambiala en los ajustes de la aplicacíon)*
 
 1. Ve a la pestaña **[Releases](../../releases)** en GitHub
-2. Descarga el archivo: `VaultSecurity Setup 1.0.0.exe`
+2. Descarga el archivo: `VaultSecurity Setup x.x.x.exe`
 3. Haz doble clic en el instalador
 4. Sigue los pasos de instalación (Next → Next → Finish)
 5. ¡Listo! VaultSecurity estará disponible en tu menú de inicio

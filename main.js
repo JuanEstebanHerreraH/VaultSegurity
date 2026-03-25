@@ -152,3 +152,35 @@ ipcMain.handle('change-icon', async (event, dataURL) => {
         return true;
     } catch(e) { return false; }
 });
+
+ipcMain.handle('fetch-url', async (event, url) => {
+    try {
+        const response = await fetch(url);
+        if(!response.ok) throw new Error("HTTP " + response.status);
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const mime = response.headers.get('content-type') || 'application/octet-stream';
+        const dataURL = `data:${mime};base64,${buffer.toString('base64')}`;
+        // Derive a filename from URL or default
+        let filename = url.split('/').pop().split('?')[0] || 'descarga';
+        if(!filename.includes('.')) {
+            if(mime.includes('pdf')) filename += '.pdf';
+            else if(mime.includes('jpeg')) filename += '.jpg';
+            else if(mime.includes('png')) filename += '.png';
+        }
+        return { success: true, file: { name: filename, dataURL } };
+    } catch(err) {
+        return { success: false, error: err.message };
+    }
+});
+
+ipcMain.handle('wake-up', async () => {
+    const win = BrowserWindow.getAllWindows()[0];
+    if(win) {
+        // Nudge opacity to force chromium repaint pipeline
+        const currentOpacity = win.getOpacity();
+        win.setOpacity(currentOpacity === 1 ? 0.99 : 1);
+        setTimeout(() => win.setOpacity(1), 50);
+    }
+    return true;
+});

@@ -20,7 +20,7 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-dark); color
 .login-box h1, .login-box h3 { margin-bottom: 20px; color: var(--primary-color); }
 .login-box p { color: var(--text-muted); margin-bottom: 20px; }
 
-input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: white; font-size: 16px; margin-bottom: 15px; outline: none; transition: all 0.3s ease; }
+input { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: white; font-size: 16px; margin-bottom: 15px; outline: none; transition: all 0.3s ease; color-scheme: dark; }
 input:focus { border-color: var(--primary-color); box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
 .btn-primary, .btn-secondary { padding: 12px 20px; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;}
 .btn-primary { background: var(--primary-color); color: #000; }
@@ -38,10 +38,65 @@ input:focus { border-color: var(--primary-color); box-shadow: 0 0 10px rgba(0, 2
 #app-shell { display: flex; width: 100%; height: 100%; padding: 20px; gap: 20px; }
 .sidebar { width: 260px; display: flex; flex-direction: column; padding: 20px 0; }
 .brand { font-size: 22px; font-weight: 800; padding: 0 20px 30px 20px; display: flex; align-items: center; gap: 10px; color: var(--primary-color); border-bottom: 1px solid var(--glass-border); margin-bottom: 20px; }
-.nav-links { list-style: none; flex: 1; }
-.nav-links li, .sidebar-bottom li { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; font-size: 15px; color: var(--text-muted); transition: all 0.3s; }
-.nav-links li:hover, .sidebar-bottom li:hover { color: white; background: rgba(255, 255, 255, 0.05); border-left: 3px solid var(--primary-color); }
-.nav-links li.active { color: white; background: rgba(0, 255, 204, 0.1); border-left: 3px solid var(--primary-color); }
+.nav-links {
+    list-style: none;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: min-content;
+    gap: 15px;
+    padding: 0 15px;
+}
+.sidebar-bottom {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 15px;
+    border-top: 1px solid var(--glass-border);
+}
+.nav-links li, .sidebar-bottom li {
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+}
+.icon-box {
+    width: 65px;
+    height: 65px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: all 0.3s;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.nav-links li:hover .icon-box, .sidebar-bottom li:hover .icon-box {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    border-color: rgba(255,255,255,0.3);
+}
+.nav-links li:hover span, .sidebar-bottom li:hover span {
+    color: white;
+}
+.nav-links li.active .icon-box {
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 20px rgba(0,255,204,0.3);
+    transform: translateY(-3px) scale(1.05);
+}
+.nav-links li.active span {
+    color: var(--primary-color);
+    font-weight: 800;
+}
 
 /* Header & Timers */
 .main-content { flex: 1; display: flex; flex-direction: column; gap: 20px; }
@@ -52,7 +107,7 @@ input:focus { border-color: var(--primary-color); box-shadow: 0 0 10px rgba(0, 2
 .search-bar input { margin: 0; border: none; background: transparent; padding: 8px; width: 150px; }
 .timers { display: flex; flex-direction: column; align-items: flex-end; }
 .internal-clock { font-size: 16px; font-family: monospace; font-weight: bold; color: var(--primary-color); }
-.countdown-timer { font-size: 26px; font-family: monospace; font-weight: 900; color: var(--danger); text-shadow: 0 0 10px rgba(255,68,68,0.8); }
+.countdown-timer { font-size: 26px; font-family: monospace; font-weight: 900; color: var(--timer-color, var(--danger)); text-shadow: 0 0 10px var(--timer-color, rgba(255,68,68,0.8)); }
 
 /* Sections */
 .sections-container { flex: 1; padding: 30px; overflow-y: auto; position: relative; scrollbar-width: thin; }
@@ -123,6 +178,48 @@ input:focus { border-color: var(--primary-color); box-shadow: 0 0 10px rgba(0, 2
 .rich-editor h2 { font-size: 1.8em; margin-bottom: 0.5em; font-weight: bold; }
 
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { 100% { transform: rotate(360deg); } }
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+
+/* Light Mode Overrides */
+body.light-mode {
+    --bg-dark: #f4f4f9;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(0, 0, 0, 0.15);
+    --text-main: #121212;
+    --text-muted: #555555;
+}
+body.light-mode #app-background {
+    background: radial-gradient(circle at center, #ffffff, #e0e0e0) !important;
+}
+body.light-mode input {
+    background: rgba(0,0,0,0.05);
+    color: #121212;
+    color-scheme: light;
+}
+body.light-mode .btn-secondary, body.light-mode .btn-action-sm {
+    color: #121212;
+    background: rgba(0,0,0,0.05);
+    border-color: rgba(0,0,0,0.15);
+}
+body.light-mode .btn-secondary:hover, body.light-mode .btn-action-sm:hover {
+    background: rgba(0,0,0,0.1);
+}
+body.light-mode .file-item, body.light-mode .stat-card, body.light-mode .category-card {
+    background: rgba(0,0,0,0.02) !important;
+}
+body.light-mode .icon-box {
+    border: 1px solid rgba(0,0,0,0.1);
+}
+body.light-mode .calc-display, body.light-mode .rich-editor, body.light-mode .tool-select, body.light-mode #pdf-preview-container {
+    background: rgba(0,0,0,0.05) !important;
+    color: #121212;
+}
+body.light-mode .calc-btn {
+    background: rgba(0,0,0,0.05);
+    color: #121212;
+}
+body.light-mode .calc-btn:hover { background: rgba(0,0,0,0.1); }
+body.light-mode .sidebar-bottom, body.light-mode .brand { border-color: rgba(0,0,0,0.15); }

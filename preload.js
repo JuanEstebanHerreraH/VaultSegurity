@@ -7,5 +7,6 @@ contextBridge.exposeInMainWorld('api', {
     exportFile: (payload) => ipcRenderer.invoke('export-file', payload),
     changeIcon: (dataURL) => ipcRenderer.invoke('change-icon', dataURL),
     pickFile: (options) => ipcRenderer.invoke('pick-file', options),
-    previewDoc: (payload) => ipcRenderer.invoke('preview-doc', payload)
+    previewDoc: (payload) => ipcRenderer.invoke('preview-doc', payload),
+    fetchUrl: (url) => ipcRenderer.invoke('fetch-url', url)
 });

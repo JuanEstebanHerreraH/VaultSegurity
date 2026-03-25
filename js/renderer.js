@@ -8,7 +8,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         folders: [],   // type: 'doc'
         albums: [],    // type: 'img'
         notes: [],     // type: 'note'
-        sectionBgs: {}
+        sectionBgs: {},
+        panelOpacity: 0.65,
+        fontFamily: 'Inter',
+        timerColor: '#ff4444',
+        calendarEvents: [],
+        lightMode: false
     };
 
     let secretKey = 'admin'; 
@@ -33,36 +38,59 @@ document.addEventListener('DOMContentLoaded', async () => {
         return false;
     }
 
-    async function saveSecureDB() {
+    async function saveSecureDB(customMsg = "Procesando Bóveda...") {
         if(!window.api || !secretKey || isSaving) return;
         isSaving = true;
         
         const loader = document.getElementById('global-loader');
-        if(loader) loader.classList.remove('hidden');
+        if(loader) {
+            const h2 = loader.querySelector('h2');
+            if(h2) h2.innerText = customMsg;
+            loader.classList.remove('hidden');
+        }
         
-        // Push serialization completely out of the current render frame
-        requestAnimationFrame(() => {
-            requestAnimationFrame(async () => {
-                try {
-                    state.globalTimeoutMinutes = parseInt(state.globalTimeoutMinutes) || 5;
-                    const dataString = JSON.stringify(state);
-                    const res = await window.api.saveDB({ dataString, masterPassword: secretKey });
-                    if (res && res.error) {
-                        console.error("IPC Save failed: " + res.error);
-                    }
-                    updateDashboardStats();
-                } catch(e) {
-                    console.error("Save Error:", e);
-                }
-                if(loader) loader.classList.add('hidden');
-                isSaving = false;
-            });
-        });
+        // Timeout para forzar el ciclo de dibujado de Chromium antes de bloquear el hilo
+        await new Promise(r => setTimeout(r, 100));
+        
+        try {
+            state.globalTimeoutMinutes = parseInt(state.globalTimeoutMinutes) || 5;
+            const dataString = JSON.stringify(state);
+            const res = await window.api.saveDB({ dataString, masterPassword: secretKey });
+            if (res && res.error) {
+                console.error("IPC Save failed: " + res.error);
+            }
+            updateDashboardStats();
+        } catch(e) {
+            console.error("Save Error:", e);
+        }
+        
+        if(loader) loader.classList.add('hidden');
+        if(window.api.wakeUp) await window.api.wakeUp();
+        isSaving = false;
     }
 
     function applyTheme() {
         document.documentElement.style.setProperty('--primary-color', state.primaryColor);
+        document.documentElement.style.setProperty('--glass-bg-alpha', state.panelOpacity || 0.65);
+        document.documentElement.style.setProperty('--glass-bg', `rgba(20, 20, 20, ${state.panelOpacity || 0.65})`);
+        document.documentElement.style.setProperty('--timer-color', state.timerColor || '#ff4444');
+        document.body.style.fontFamily = state.fontFamily || 'Inter';
+        
         document.getElementById('setting-theme').value = state.primaryColor;
+        document.getElementById('setting-opacity').value = state.panelOpacity || 0.65;
+        document.getElementById('opacity-val-lbl').innerText = Math.round((state.panelOpacity || 0.65) * 100) + '%';
+        document.getElementById('setting-font').value = state.fontFamily || 'Inter';
+        document.getElementById('setting-timer-color').value = state.timerColor || '#ff4444';
+        document.getElementById('setting-bg').value = state.globalBg || '';
+        
+        const btnLight = document.getElementById('btn-toggle-light');
+        if(state.lightMode) {
+            document.body.classList.add('light-mode');
+            if(btnLight) btnLight.innerText = "Modo Claro: Encendido";
+        } else {
+            document.body.classList.remove('light-mode');
+            if(btnLight) btnLight.innerText = "Modo Claro: Apagado";
+        }
     }
 
     function applyBackground(targetSection) {
@@ -278,7 +306,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.className = 'category-card ' + (item.password ? 'locked ' : '') + ((isDashSelecting && dashSelectType === mode && dashSelectedIds.has(item.id)) ? 'selected' : '');
             
             let iconHtml = '';
-            if(item.icon && item.icon.startsWith('data:')) {
+            if(item.icon && (item.icon.startsWith('data:') || item.icon.startsWith('http'))) {
                 iconHtml = `<img src="${item.icon}" style="width:48px; height:48px; border-radius:8px; margin-bottom:15px; object-fit:cover; display:inline-block;">`;
             } else {
                 iconHtml = `<ion-icon name="${item.icon || 'folder'}" class="main-icon"></ion-icon>`;
@@ -723,6 +751,64 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 1500);
     });
 
+    // --- Settings Listeners ---
+    document.getElementById('btn-save-appearance').addEventListener('click', () => {
+        state.primaryColor = document.getElementById('setting-theme').value;
+        state.panelOpacity = parseFloat(document.getElementById('setting-opacity').value);
+        state.fontFamily = document.getElementById('setting-font').value;
+        state.globalBg = document.getElementById('setting-bg').value;
+        applyTheme();
+        applyBackground('dashboard');
+        saveSecureDB();
+        const notice = document.getElementById('settings-save-notice');
+        notice.innerText = "Apariencia guardada.";
+        setTimeout(() => notice.innerText = "", 2000);
+    });
+
+    document.getElementById('btn-toggle-light').addEventListener('click', async () => {
+        state.lightMode = !state.lightMode;
+        applyTheme();
+        await saveSecureDB("Aplicando Tema...");
+    });
+
+    document.getElementById('setting-opacity').addEventListener('input', (e) => {
+        document.getElementById('opacity-val-lbl').innerText = Math.round(e.target.value * 100) + '%';
+    });
+
+    document.getElementById('btn-save-sec').addEventListener('click', () => {
+        state.globalTimeoutMinutes = parseInt(document.getElementById('setting-timeout').value) || 5;
+        state.timerColor = document.getElementById('setting-timer-color').value;
+        applyTheme();
+        startInactivityTimer();
+        saveSecureDB();
+        const notice = document.getElementById('settings-save-notice');
+        notice.innerText = "Ajustes de seguridad guardados.";
+        setTimeout(() => notice.innerText = "", 2000);
+    });
+
+    document.getElementById('btn-change-pwd').addEventListener('click', async () => {
+        const oldP = document.getElementById('pwd-old').value;
+        const newP = document.getElementById('pwd-new').value;
+        const confP = document.getElementById('pwd-confirm').value;
+        if(oldP !== state.passwordHash && oldP !== secretKey) return alert("Contraseña actual incorrecta.");
+        if(newP !== confP) return alert("Las nuevas contraseñas no coinciden.");
+        if(!newP) return alert("Ingresa una nueva contraseña válida.");
+        state.passwordHash = newP;
+        secretKey = newP;
+        await saveSecureDB();
+        alert("Contraseña Maestra cambiada con éxito.");
+        document.getElementById('pwd-old').value = '';
+        document.getElementById('pwd-new').value = '';
+        document.getElementById('pwd-confirm').value = '';
+    });
+
+    document.getElementById('btn-pick-global-bg').addEventListener('click', async () => {
+        const res = await window.api.pickFile({ filters: [{ name: 'Images', extensions: ['jpg', 'png', 'jpeg', 'gif'] }]});
+        if(res.success) {
+            document.getElementById('setting-bg').value = res.files[0].dataURL;
+        }
+    });
+
     // --- Universal Converter Modal ---
     let pendingConversionFile = null;
 
@@ -739,6 +825,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         btn.addEventListener('click', async () => {
             if(!pendingConversionFile) return alert("Selecciona un archivo arriba primero.");
             const type = btn.getAttribute('data-type');
+            
+            const loader = document.getElementById('global-loader');
+            if(loader) {
+                loader.querySelector('h2').innerText = "Convirtiendo Archivo...";
+                loader.classList.remove('hidden');
+            }
+            const hideLoader = () => { if(loader) loader.classList.add('hidden'); };
             
             const isImgConv = type.startsWith('img-');
             if(isImgConv) {
@@ -778,9 +871,30 @@ document.addEventListener('DOMContentLoaded', async () => {
                         dataURL: finalData,
                         type: mime
                     });
+                    hideLoader();
                     if(res.success) alert("Conversión Finalizada con Éxito.");
                 };
                 img.src = pendingConversionFile.dataURL;
+            } else if (type === 'img-pptx') {
+                if(!pendingConversionFile.dataURL.startsWith('data:image/')) return alert("El conversor PPTX actualmente solo admite imágenes (offline).");
+                try {
+                    let pptx = new PptxGenJS();
+                    let slide = pptx.addSlide();
+                    slide.addImage({ data: pendingConversionFile.dataURL, x: 0, y: 0, w: '100%', h: '100%' });
+                    
+                    pptx.write('base64').then(async (base64) => {
+                        const finalData = 'data:application/vnd.openxmlformats-officedocument.presentationml.presentation;base64,' + base64;
+                        const res = await window.api.exportFile({ 
+                            name: pendingConversionFile.name.split('.')[0] + '.pptx', 
+                            dataURL: finalData,
+                            type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+                        });
+                        if(res.success) alert("Conversión a PPTX Finalizada con Éxito.");
+                    }).catch(e => {
+                        console.error(e);
+                        alert("Error creando PPTX.");
+                    });
+                } catch(e) { console.error(e); alert("pptxgenjs failed"); }
             } else if (type === 'txt-word' || type === 'txt-pdf') {
                 if(pendingConversionFile.name.endsWith('.pdf')) {
                     if (type === 'txt-word') {
@@ -838,62 +952,238 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 
-    // --- Settings / Options ---
-    document.getElementById('btn-save-appearance').addEventListener('click', () => { 
-        state.globalBg = document.getElementById('setting-bg').value.trim();
-        state.primaryColor = document.getElementById('setting-theme').value || '#00ffcc';
-        saveSecureDB();
-        applyTheme();
-        applyBackground(currentNavTarget);
-    });
-
-    document.getElementById('btn-pick-global-bg').addEventListener('click', async () => {
-        const res = await window.api.pickFile({ filters: [{ name: 'Images', extensions: ['jpg', 'png'] }]});
-        if(res.success) document.getElementById('setting-bg').value = res.files[0].dataURL;
-    });
+    // --- PDF Tools Logic ---
+    let pdfFilesList = [];
+    window.currentPdfPreviewIndex = -1;
     
-    document.getElementById('btn-pick-app-icon').addEventListener('click', async () => {
-        const res = await window.api.pickFile({ filters: [{ name: 'Images', extensions: ['png'] }]});
-        if(res.success) {
-            const success = await window.api.changeIcon(res.files[0].dataURL);
-            if(success) alert("Ícono Inyectado al Instante.");
+    // Explicit configuracion para la web worker nativa de electron (local)
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'node_modules/pdfjs-dist/build/pdf.worker.min.js';
+
+    window.previewPdf = async function(index) {
+        if(!window.pdfjsLib) return alert("El motor PDF nativo aún está cargando o reportó un error de lectura.");
+        const file = pdfFilesList[index];
+        if(!file) return;
+        
+        window.currentPdfPreviewIndex = index;
+        const container = document.getElementById('pdf-preview-container');
+        container.innerHTML = '<div style="color:var(--text-muted); grid-column: 1 / -1; text-align:center;">Analizando páginas en memoria, por favor espera...</div>';
+        
+        try {
+            const arr = Uint8Array.from(atob(file.dataURL.split(',')[1]), c => c.charCodeAt(0));
+            const loadingTask = window.pdfjsLib.getDocument({data: arr});
+            const pdfDocument = await loadingTask.promise;
+            const numPages = pdfDocument.numPages;
+            
+            container.innerHTML = '';
+            file.selectedPages = file.selectedPages || new Set();
+            updatePdfSelectionInfo(file);
+            
+            for(let i=1; i<=numPages; i++) {
+                const page = await pdfDocument.getPage(i);
+                const viewport = page.getViewport({scale: 0.5});
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                canvas.style = `width:100%; height:auto; border-radius:4px; box-shadow:0 2px 5px rgba(0,0,0,0.5); background:white;`;
+                
+                const ctx = canvas.getContext('2d');
+                await page.render({canvasContext: ctx, viewport: viewport}).promise;
+                
+                const wrapper = document.createElement('div');
+                const isSelected = file.selectedPages.has(i-1);
+                wrapper.style = `position:relative; cursor:pointer; padding:5px; border-radius:6px; transition:0.2s; border:2px solid ${isSelected ? 'var(--primary-color)' : 'transparent'}; background:${isSelected ? 'rgba(0,255,204,0.1)' : 'transparent'}`;
+                
+                wrapper.innerHTML = `<div style="text-align:center; font-size:10px; font-weight:bold; margin-bottom:5px; color:${isSelected ? 'var(--primary-color)' : 'var(--text-muted)'}">Pág ${i}</div>`;
+                wrapper.appendChild(canvas);
+                
+                if(isSelected) {
+                    const checkIcon = document.createElement('div');
+                    checkIcon.style = `position:absolute; top:35px; right:15px; background:var(--primary-color); color:black; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.5); font-size:16px;`;
+                    checkIcon.innerHTML = `<ion-icon name="checkmark"></ion-icon>`;
+                    wrapper.appendChild(checkIcon);
+                }
+                
+                wrapper.onclick = () => {
+                    if(file.selectedPages.has(i-1)) file.selectedPages.delete(i-1);
+                    else file.selectedPages.add(i-1);
+                    updatePdfSelectionInfo(file);
+                    previewPdf(index);
+                };
+                
+                container.appendChild(wrapper);
+            }
+        } catch(e) {
+            console.error(e);
+            container.innerHTML = '<div style="color:var(--danger); grid-column: 1 / -1; text-align:center;">Error renderizando visualización del PDF.</div>';
+        }
+    };
+
+    function updatePdfSelectionInfo(file) {
+        document.getElementById('pdf-selection-info').innerText = `${file.selectedPages ? file.selectedPages.size : 0} hojas seleccionadas`;
+    }
+
+    function renderPdfList() {
+        const container = document.getElementById('pdf-list-container');
+        container.innerHTML = '';
+        pdfFilesList.forEach((pdf, index) => {
+            const el = document.createElement('div');
+            el.className = 'file-item';
+            el.style = `background-color: ${index === window.currentPdfPreviewIndex ? 'rgba(0,255,204,0.1)' : 'rgba(0,0,0,0.4)'}; flex-direction: column; align-items: stretch; border: 1px solid ${index === window.currentPdfPreviewIndex ? 'var(--primary-color)' : 'var(--glass-border)'};`;
+            el.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div class="file-label" style="cursor:pointer; flex:1;" onclick="previewPdf(${index})" title="Haz click para previsualizar este documento">
+                        <ion-icon name="document" style="margin-right:5px; color:${index === window.currentPdfPreviewIndex ? 'var(--primary-color)' : 'var(--text-muted)'}"></ion-icon>
+                        <span style="font-size: 13px; word-break: break-all; font-weight:${index === window.currentPdfPreviewIndex ? 'bold' : 'normal'}">${pdf.name}</span>
+                    </div>
+                    <div style="display:flex; gap:5px; flex-shrink: 0; margin-left:10px;">
+                        <button class="btn-action-sm" onclick="movePdf(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3"' : ''} title="Subir"><ion-icon name="chevron-up"></ion-icon></button>
+                        <button class="btn-action-sm" onclick="movePdf(${index}, 1)" ${index === pdfFilesList.length - 1 ? 'disabled style="opacity:0.3"' : ''} title="Bajar"><ion-icon name="chevron-down"></ion-icon></button>
+                        <button class="btn-action-sm danger" onclick="removePdf(${index})" title="Quitar"><ion-icon name="close"></ion-icon></button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(el);
+        });
+        
+        if(pdfFilesList.length === 0) {
+            document.getElementById('pdf-preview-container').innerHTML = '<div style="color:var(--text-muted); grid-column: 1 / -1; text-align:center;">Selecciona un PDF en la lista para escanear sus páginas.</div>';
+            document.getElementById('pdf-selection-info').innerText = "0 hojas seleccionadas";
+            window.currentPdfPreviewIndex = -1;
+        }
+    }
+
+    window.movePdf = function(index, dir) {
+        if(index + dir < 0 || index + dir >= pdfFilesList.length) return;
+        const temp = pdfFilesList[index];
+        pdfFilesList[index] = pdfFilesList[index + dir];
+        pdfFilesList[index + dir] = temp;
+        // If the moved one is the active one, update index
+        if(window.currentPdfPreviewIndex === index) window.currentPdfPreviewIndex += dir;
+        else if(window.currentPdfPreviewIndex === index + dir) window.currentPdfPreviewIndex -= dir;
+        renderPdfList();
+    };
+
+    window.removePdf = function(index) {
+        pdfFilesList.splice(index, 1);
+        if(window.currentPdfPreviewIndex === index) {
+            window.currentPdfPreviewIndex = -1;
+            document.getElementById('pdf-preview-container').innerHTML = '<div style="color:var(--text-muted); grid-column: 1 / -1; text-align:center;">Selecciona un PDF en la lista para escanear sus páginas.</div>';
+            document.getElementById('pdf-selection-info').innerText = "0 hojas seleccionadas";
+        } else if(window.currentPdfPreviewIndex > index) {
+            window.currentPdfPreviewIndex--;
+        }
+        renderPdfList();
+    };
+
+    document.getElementById('btn-pdf-add').addEventListener('click', async () => {
+        const res = await window.api.pickFile({ filters: [{name: 'PDF', extensions: ['pdf']}] });
+        if(res.success && res.files) {
+            res.files.forEach(f => f.selectedPages = new Set());
+            pdfFilesList.push(...res.files);
+            renderPdfList();
+            if(window.currentPdfPreviewIndex === -1) previewPdf(0);
         }
     });
 
-    document.getElementById('btn-reset-app-icon').addEventListener('click', async () => {
-        const success = await window.api.changeIcon(null);
-        if (success) alert("El ícono se restauró al predeterminado de VaultSecurity.");
+    document.getElementById('btn-pdf-clear').addEventListener('click', () => {
+        if(pdfFilesList.length===0) return;
+        pdfFilesList = [];
+        renderPdfList();
     });
 
-    document.getElementById('btn-save-sec').addEventListener('click', () => { 
-        const val = parseInt(document.getElementById('setting-timeout').value);
-        if(val >= 1) {
-            state.globalTimeoutMinutes = val; 
-            saveSecureDB(); startInactivityTimer();
-            alert("Tiempo Actualizado");
-        }
+    document.getElementById('btn-pdf-export-selected').addEventListener('click', async () => {
+        const file = pdfFilesList[window.currentPdfPreviewIndex];
+        if(!file || !file.selectedPages || file.selectedPages.size === 0) return alert("Selecciona en la cuadrícula qué hojas quieres exportar.");
+        
+        try {
+            const arr = Uint8Array.from(atob(file.dataURL.split(',')[1]), c => c.charCodeAt(0));
+            const pdfDoc = await PDFLib.PDFDocument.load(arr);
+            const exportPdf = await PDFLib.PDFDocument.create();
+            
+            const indices = Array.from(file.selectedPages).sort((a,b)=>a-b);
+            const copiedPages = await exportPdf.copyPages(pdfDoc, indices);
+            copiedPages.forEach(p => exportPdf.addPage(p));
+            
+            const pdfBytes = await exportPdf.saveAsBase64({ dataUri: true });
+            const res = await window.api.exportFile({
+                name: `Extraccion_${file.name}`,
+                dataURL: pdfBytes,
+                type: "application/pdf"
+            });
+            if(res.success) {
+                alert("Se han exportado tus hojas seleccionadas en un nuevo archivo.");
+                file.selectedPages.clear();
+                previewPdf(window.currentPdfPreviewIndex);
+            }
+        } catch(e) { console.error(e); alert("Hubo un error al exportar la selección."); }
     });
 
-    // Change Password
-    document.getElementById('btn-change-pwd').addEventListener('click', () => {
-        const oldP = document.getElementById('pwd-old').value;
-        const newP = document.getElementById('pwd-new').value;
-        const confP = document.getElementById('pwd-confirm').value;
-
-        if(!oldP || !newP || !confP) return alert("Llena todos los campos.");
-        if(oldP !== secretKey) return alert("La contraseña actual es incorrecta.");
-        if(newP !== confP) return alert("Las contraseñas nuevas no coinciden.");
-
-        state.passwordHash = newP;
-        secretKey = newP;
+    document.getElementById('btn-pdf-delete-selected').addEventListener('click', async () => {
+        const file = pdfFilesList[window.currentPdfPreviewIndex];
+        if(!file || !file.selectedPages || file.selectedPages.size === 0) return alert("Selecciona qué hojas deseas eliminar y purgar del documento activo.");
         
-        // Don't alert immediately, let Save DB trigger peacefully to prevent UI freezing deadlocks
-        setTimeout(() => alert("¡Tu contraseña matriz ha sido cambiada de forma local y segura!"), 200);
-        saveSecureDB();
+        if(!confirm(`Se PURGARÁN DE FORMA DEFINITIVA las ${file.selectedPages.size} hojas seleccionadas dentro de la sesión de este archivo. ¿Continuar?`)) return;
         
-        document.getElementById('pwd-old').value = '';
-        document.getElementById('pwd-new').value = '';
-        document.getElementById('pwd-confirm').value = '';
+        try {
+            const arr = Uint8Array.from(atob(file.dataURL.split(',')[1]), c => c.charCodeAt(0));
+            const pdfDoc = await PDFLib.PDFDocument.load(arr);
+            const total = pdfDoc.getPageCount();
+            const exportPdf = await PDFLib.PDFDocument.create();
+            
+            // Collect pages to keep (not selected)
+            const keepIndices = [];
+            for(let i=0; i<total; i++) {
+                if(!file.selectedPages.has(i)) keepIndices.push(i);
+            }
+            
+            if(keepIndices.length === 0) {
+                return alert("No puedes eliminar absolutamente TODAS las hojas, destrúyelo explícitamente quitándolo de la lista.");
+            }
+            
+            const copiedPages = await exportPdf.copyPages(pdfDoc, keepIndices);
+            copiedPages.forEach(p => exportPdf.addPage(p));
+            
+            const pdfBytes = await exportPdf.saveAsBase64({ dataUri: true });
+            file.dataURL = pdfBytes; // Overwrite memory
+            file.selectedPages.clear();
+            
+            previewPdf(window.currentPdfPreviewIndex);
+            alert("Las hojas fueron eliminadas exitosamente de la sesión actual de la app.");
+        } catch(e) { console.error(e); alert("Hubo un error al destruir las hojas."); }
+    });
+
+    document.getElementById('btn-pdf-merge').addEventListener('click', async () => {
+        if(pdfFilesList.length < 2) return alert("Añade al menos 2 PDFs para combinarlos.");
+        try {
+            const mergedPdf = await PDFLib.PDFDocument.create();
+            let added = 0;
+            for(let file of pdfFilesList) {
+                const arr = Uint8Array.from(atob(file.dataURL.split(',')[1]), c => c.charCodeAt(0));
+                const pdfDoc = await PDFLib.PDFDocument.load(arr);
+                
+                // If they selected explicitly some pages on this file, merge only those.
+                // Otherwise, merge all.
+                let indices = [];
+                if(file.selectedPages && file.selectedPages.size > 0) {
+                    indices = Array.from(file.selectedPages).sort((a,b)=>a-b);
+                } else {
+                    indices = Array.from({length: pdfDoc.getPageCount()}, (_, i) => i);
+                }
+                
+                const copiedPages = await mergedPdf.copyPages(pdfDoc, indices);
+                copiedPages.forEach(page => { mergedPdf.addPage(page); added++; });
+            }
+            
+            if(added === 0) return alert("No hay hojas efectivas para unir.");
+            const pdfBytes = await mergedPdf.saveAsBase64({ dataUri: true });
+            const res = await window.api.exportFile({
+                name: "Unidos_" + Date.now() + ".pdf",
+                dataURL: pdfBytes,
+                type: "application/pdf"
+            });
+            if(res.success) alert("Archivos Unidos y Exportados exitosamente!");
+        } catch(e) { console.error(e); alert("Hubo un error interno al crear el PDF unificado."); }
     });
 
     function updateDashboardStats() {
@@ -903,6 +1193,298 @@ document.addEventListener('DOMContentLoaded', async () => {
         const stD = document.getElementById('stat-docs'); if(stD) stD.innerText = docsCount + " Archivos";
         const stI = document.getElementById('stat-imgs'); if(stI) stI.innerText = imgsCount + " Imágenes";
         const stN = document.getElementById('stat-notes'); if(stN) stN.innerText = notesCount + " Notas";
+        
+        // Render Dashboard Upcoming Events
+        if(!state.calendarEvents) return;
+        const container = document.getElementById('dashboard-events-list');
+        if(!container) return;
+        
+        const now = new Date();
+        const sortedEvents = [...state.calendarEvents].sort((a,b) => {
+            return new Date(a.date+'T'+(a.time||'00:00')) - new Date(b.date+'T'+(b.time||'00:00'));
+        });
+        const upcoming = sortedEvents.filter(e => {
+            const evDate = new Date(e.date+'T'+(e.time||'23:59'));
+            return evDate >= now && !e.triggered;
+        }).slice(0, 3);
+        
+        if(upcoming.length === 0) {
+            container.innerHTML = '<div style="color:var(--text-muted); font-size:14px;">No hay eventos próximos.</div>';
+            return;
+        }
+        
+        container.innerHTML = upcoming.map(ev => `
+            <div style="background:rgba(0,0,0,0.2); padding: 12px; border-radius:6px; border-left:4px solid var(--primary-color);">
+                <div style="font-weight:bold; font-size:14px;">${ev.title}</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:3px;"><ion-icon name="calendar"></ion-icon> ${ev.date} ${ev.time ? ' - ' + ev.time : ''}</div>
+            </div>
+        `).join('');
+    }
+
+    // --- Calendar & Notes Logic ---
+    let currentDate = new Date();
+    
+    function renderCalendar() {
+        if(!state.calendarEvents) state.calendarEvents = [];
+        const month = currentDate.getMonth();
+        const year = currentDate.getFullYear();
+        
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        document.getElementById('cal-month-year').innerText = `${monthNames[month]} ${year}`;
+        
+        const grid = document.getElementById('calendar-grid');
+        grid.innerHTML = '';
+        
+        // paddings
+        for(let i=0; i < firstDay; i++) {
+            grid.innerHTML += `<div></div>`;
+        }
+        
+        const today = new Date();
+        for(let i=1; i <= daysInMonth; i++) {
+            const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+            const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+            
+            const eventsForDay = state.calendarEvents.filter(e => e.date === dateStr);
+            const hasEvents = eventsForDay.length > 0;
+            
+            const el = document.createElement('div');
+            el.style = `padding: 10px; border-radius:8px; border:1px solid var(--glass-border); background: ${isToday ? 'rgba(0,255,204,0.2)' : 'rgba(255,255,255,0.05)'}; cursor:pointer; text-align:center; position:relative; min-height:60px; transition:0.2s`;
+            el.innerHTML = `
+                <div style="font-weight:bold; ${isToday ? 'color:var(--primary-color)' : ''}">${i}</div>
+                ${hasEvents ? `<div style="font-size:10px; color:var(--primary-color); margin-top:5px;">${eventsForDay.length} Eventos</div>` : ''}
+            `;
+            el.onmouseenter = () => el.style.borderColor = 'var(--primary-color)';
+            el.onmouseleave = () => el.style.borderColor = 'var(--glass-border)';
+            
+            el.onclick = () => {
+                document.getElementById('ev-date').value = dateStr;
+                openCalendarDayModal(dateStr, eventsForDay);
+            };
+            grid.appendChild(el);
+        }
+        
+        renderEventsList();
+    }
+    
+    document.getElementById('cal-prev').onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); };
+    document.getElementById('cal-next').onclick = () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); };
+    
+    window.openCalendarDayModal = function(dateStr, eventsForDay) {
+        document.getElementById('day-modal-title').innerText = `Eventos: ${dateStr}`;
+        const list = document.getElementById('day-events-list');
+        list.innerHTML = '';
+        
+        if(eventsForDay.length === 0) {
+            list.innerHTML = '<div style="color:var(--text-muted); font-size:14px; text-align:center;">No hay eventos este día.</div>';
+        } else {
+            eventsForDay.forEach(ev => {
+                const el = document.createElement('div');
+                el.style = "background:rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; position:relative; cursor:pointer;";
+                el.onclick = (e) => { 
+                    if(!e.target.closest('.delete-btn')) {
+                        editCalendarEvent(ev.id); 
+                    }
+                };
+                el.innerHTML = `
+                    <div style="font-weight:bold; color:var(--primary-color); margin-bottom:5px;">${ev.title}</div>
+                    <div style="font-size:12px; color:var(--text-muted);"><ion-icon name="time"></ion-icon> ${ev.time} | <ion-icon name="notifications"></ion-icon> ${ev.sound==='none'?'Silencio':ev.sound}</div>
+                    ${ev.notes ? `<div style="font-size:13px; margin-top:5px; border-top:1px solid rgba(255,255,255,0.1); padding-top:5px;">${ev.notes}</div>` : ''}
+                    <button class="delete-btn btn-action-sm danger" style="position:absolute; top:10px; right:10px; border-radius:50%; width:30px; height:30px;" onclick="removeCalendarEvent('${ev.id}'); document.getElementById('calendar-day-modal').classList.add('hidden');"><ion-icon name="trash"></ion-icon></button>
+                `;
+                list.appendChild(el);
+            });
+        }
+        
+        document.getElementById('calendar-day-modal').classList.remove('hidden');
+    };
+
+    window.editCalendarEvent = function(id) {
+        document.getElementById('calendar-day-modal').classList.add('hidden');
+        const ev = state.calendarEvents.find(e => e.id === id);
+        if(!ev) return;
+        window.currentEditEventId = id;
+        document.getElementById('ev-date').value = ev.date;
+        document.getElementById('ev-time').value = ev.time || '';
+        document.getElementById('ev-title').value = ev.title;
+        document.getElementById('ev-notes').value = ev.notes || '';
+        document.getElementById('ev-sound').value = ev.sound || 'beep';
+        document.getElementById('calendar-event-modal').classList.remove('hidden');
+    };
+
+    document.getElementById('btn-open-new-event').onclick = () => {
+        window.currentEditEventId = null;
+        document.getElementById('calendar-day-modal').classList.add('hidden');
+        openCalendarEventModal();
+    };
+
+    window.openCalendarEventModal = function() {
+        document.getElementById('ev-title').value = '';
+        document.getElementById('ev-time').value = '';
+        document.getElementById('ev-notes').value = '';
+        document.getElementById('ev-sound').value = 'beep';
+        if(!document.getElementById('ev-date').value) {
+            const d = new Date();
+            document.getElementById('ev-date').value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+        document.getElementById('calendar-event-modal').classList.remove('hidden');
+    }
+    
+    document.getElementById('btn-save-event').onclick = () => {
+        const date = document.getElementById('ev-date').value;
+        let time = document.getElementById('ev-time').value;
+        const title = document.getElementById('ev-title').value.trim();
+        const notes = document.getElementById('ev-notes').value.trim();
+        const sound = document.getElementById('ev-sound').value;
+        
+        if(!date || !title) return alert("La Fecha y el Título son campos requeridos.");
+        
+        if(!time) {
+            alert("Aviso: No se ha puesto la hora para el evento, por lo tanto la alarma no sonará hasta que se edite y se asigne una hora.");
+            time = ""; // Keep empty
+        }
+        
+        if(window.currentEditEventId) {
+            const evIndex = state.calendarEvents.findIndex(e => e.id === window.currentEditEventId);
+            if(evIndex > -1) {
+                state.calendarEvents[evIndex].date = date;
+                state.calendarEvents[evIndex].time = time;
+                state.calendarEvents[evIndex].title = title;
+                state.calendarEvents[evIndex].notes = notes;
+                state.calendarEvents[evIndex].sound = sound;
+                state.calendarEvents[evIndex].triggered = false;
+            }
+            window.currentEditEventId = null;
+        } else {
+            state.calendarEvents.push({
+                id: Date.now().toString(),
+                date, time, title, notes, sound,
+                triggered: false
+            });
+        }
+        saveSecureDB();
+        document.getElementById('calendar-event-modal').classList.add('hidden');
+        renderCalendar();
+        updateDashboardStats();
+    };
+
+    window.removeCalendarEvent = function(id) {
+        state.calendarEvents = state.calendarEvents.filter(e => e.id !== id);
+        saveSecureDB();
+        renderCalendar();
+        updateDashboardStats();
+    }
+    
+    function renderEventsList() {
+        if(!state.calendarEvents) state.calendarEvents = [];
+        const container = document.getElementById('calendar-events-list');
+        container.innerHTML = '';
+        
+        const sortedEvents = [...state.calendarEvents].sort((a,b) => {
+            return new Date(a.date+'T'+(a.time||'00:00')) - new Date(b.date+'T'+(b.time||'00:00'));
+        });
+        
+        const now = new Date();
+        const upcoming = sortedEvents.filter(e => {
+            const evDate = new Date(e.date+'T'+(e.time||'23:59'));
+            return evDate >= now;
+        }).slice(0, 10);
+        
+        if(upcoming.length === 0) {
+            container.innerHTML = '<div style="color:var(--text-muted); font-size:14px;">No hay eventos próximos.</div>';
+            return;
+        }
+        
+        upcoming.forEach(ev => {
+            const el = document.createElement('div');
+            el.className = 'glass-panel';
+            el.style = "padding: 15px; border-radius: 8px; position:relative;";
+            el.innerHTML = `
+                <div style="font-weight:bold; color:var(--primary-color); margin-bottom:5px;">${ev.title}</div>
+                <div style="font-size:12px; color:var(--text-muted);"><ion-icon name="calendar"></ion-icon> ${ev.date} ${ev.time ? 'A las '+ev.time : ''}</div>
+                ${ev.notes ? `<div style="font-size:13px; margin-top:5px; border-top:1px solid rgba(255,255,255,0.1); padding-top:5px;">${ev.notes}</div>` : ''}
+                <button class="btn-action-sm danger" style="position:absolute; top:10px; right:10px; border-radius:50%; width:30px; height:30px;" onclick="removeCalendarEvent('${ev.id}')"><ion-icon name="close"></ion-icon></button>
+            `;
+            container.appendChild(el);
+        });
+    }
+
+    function playBeep(type = 'beep') {
+        if(type === 'none') return;
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            if(type === 'alarm') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(440, ctx.currentTime);
+                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.2);
+                osc.frequency.setValueAtTime(440, ctx.currentTime + 0.4);
+                osc.frequency.setValueAtTime(880, ctx.currentTime + 0.6);
+                gain.gain.setValueAtTime(0.5, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.5);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 1.5);
+            } else if (type === 'bell') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1200, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 1);
+                gain.gain.setValueAtTime(0.8, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.5);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 1.5);
+            } else {
+                osc.type = 'sine';
+                osc.frequency.value = 880; 
+                gain.gain.setValueAtTime(0.5, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 1);
+            }
+        } catch(e) {}
+    }
+
+    // Alarm Checker: run every 30 seconds
+    setInterval(() => {
+        if(!state.calendarEvents) return;
+        const now = new Date();
+        let needsSave = false;
+        
+        state.calendarEvents.forEach(ev => {
+            if(!ev.time || ev.triggered) return;
+            const evTime = new Date(ev.date + 'T' + ev.time);
+            
+            const diffMs = now - evTime;
+            if(diffMs >= 0 && diffMs <= 5 * 60000) {
+                ev.triggered = true;
+                needsSave = true;
+                playBeep(ev.sound || 'beep');
+                setTimeout(() => {
+                    alert(`⏰ NOTIFICACIÓN DE EVENTO ⏰\n\n${ev.title}\n${ev.notes || ''}`);
+                }, 500);
+            } else if (diffMs > 5 * 60000) {
+                ev.triggered = true;
+                needsSave = true;
+            }
+        });
+        if(needsSave) {
+            saveSecureDB();
+            renderEventsList();
+            updateDashboardStats();
+        }
+    }, 30000);
+
+    // Patch initial load of calendar
+    const origRender = renderSpaces;
+    renderSpaces = function() {
+        origRender();
+        renderCalendar();
     }
 
 });

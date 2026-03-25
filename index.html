@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VaultSecurity - Private Space</title>
     <!-- Use a modern font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Roboto:wght@300;400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link id="dynamic-theme" rel="stylesheet" href="css/style.css">
     <!-- Ionicons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -26,6 +26,13 @@
         </div>
     </div>
 
+    <!-- Global Loader (Anti-Freeze UI) -->
+    <div id="global-loader" class="overlay hidden" style="z-index: 10000; flex-direction:column; gap:20px; background: rgba(0,0,0,0.9);">
+        <div style="width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <h2 style="color:white; text-shadow: 0 0 10px rgba(0,0,0,0.8);">Procesando Cambios...</h2>
+        <p style="color:var(--text-main); font-size:16px; max-width: 450px; text-align:center;">Operación criptográfica pesada en curso.<br><br><b>Por favor minimiza y reabre la aplicación</b> para guardar los cambios y refrescar la pantalla interactiva.</p>
+    </div>
+
     <!-- Main Shell -->
     <div id="app-shell" class="hidden">
         <nav class="sidebar glass-panel">
@@ -34,15 +41,48 @@
                 <span>Vault</span>
             </div>
             <ul class="nav-links">
-                <li data-target="dashboard" class="active"><ion-icon name="grid"></ion-icon> Panel Inicial</li>
-                <li data-target="documents"><ion-icon name="folder-open"></ion-icon> Archivos</li>
-                <li data-target="galleries"><ion-icon name="images"></ion-icon> Galería</li>
-                <li data-target="notes"><ion-icon name="journal"></ion-icon> Bloc de Notas</li>
-                <li data-target="converters"><ion-icon name="sync"></ion-icon> Conversores</li>
+                <li data-target="dashboard" class="active">
+                    <div class="icon-box" style="background: linear-gradient(135deg, #f4a261, #e76f51); color: white;"><ion-icon name="grid"></ion-icon></div>
+                    <span>Inicio</span>
+                </li>
+                <li data-target="documents">
+                    <div class="icon-box" style="background: linear-gradient(135deg, #48cae4, #0077b6); color: white;"><ion-icon name="folder-open"></ion-icon></div>
+                    <span>Archivos</span>
+                </li>
+                <li data-target="galleries">
+                    <div class="icon-box" style="background: linear-gradient(135deg, #ffd166, #ff9f1c); color: #442a00;"><ion-icon name="images"></ion-icon></div>
+                    <span>Galería</span>
+                </li>
+                <li data-target="notes">
+                    <div class="icon-box" style="background: linear-gradient(135deg, #06d6a0, #048a81); color: white;"><ion-icon name="journal"></ion-icon></div>
+                    <span>Notas</span>
+                </li>
+                <li data-target="converters">
+                    <div class="icon-box" style="background: linear-gradient(135deg, #ef476f, #b5179e); color: white;"><ion-icon name="sync"></ion-icon></div>
+                    <span>Conversores</span>
+                </li>
+                <li data-target="pdf-tools">
+                    <div class="icon-box" style="background: linear-gradient(135deg, #118ab2, #073b4c); color: white;"><ion-icon name="document"></ion-icon></div>
+                    <span>Herram. PDF</span>
+                </li>
+                <li data-target="calendar">
+                    <div class="icon-box" style="background: linear-gradient(135deg, #f72585, #b5179e); color: white;"><ion-icon name="calendar"></ion-icon></div>
+                    <span>Calendario</span>
+                </li>
+                <li data-target="calculator">
+                    <div class="icon-box" style="background: linear-gradient(135deg, #9b5de5, #7209b7); color: white;"><ion-icon name="calculator"></ion-icon></div>
+                    <span>Calculadora</span>
+                </li>
             </ul>
             <div class="sidebar-bottom">
-                <li data-target="settings"><ion-icon name="settings"></ion-icon> Ajustes Generales</li>
-                <li id="btn-lock"><ion-icon name="log-out"></ion-icon> Bloquear</li>
+                <li data-target="settings">
+                    <div class="icon-box" style="background: linear-gradient(135deg, #aaa, #555); color: white;"><ion-icon name="settings"></ion-icon></div>
+                    <span>Ajustes</span>
+                </li>
+                <li id="btn-lock">
+                    <div class="icon-box" style="background: linear-gradient(135deg, var(--danger), #aa0000); color: white;"><ion-icon name="log-out"></ion-icon></div>
+                    <span>Bloquear</span>
+                </li>
             </div>
         </nav>
 
@@ -81,8 +121,17 @@
                             <h3 id="stat-notes">0 Notas</h3>
                         </div>
                     </div>
-                </section>
+                    
+                    <div class="dashboard-grid mt-3" style="grid-template-columns: 1fr;">
+                        <div class="glass-panel" style="padding: 20px;">
+                            <h3 style="margin-bottom: 15px; color: var(--primary-color)"><ion-icon name="notifications"></ion-icon> Próximos Eventos</h3>
+                            <div id="dashboard-events-list" style="display:flex; flex-direction:column; gap:10px;">
+                                <div style="color:var(--text-muted); font-size:14px;">No hay eventos próximos.</div>
+                            </div>
+                        </div>
+                    </div>
 
+                </section>
                 <section id="section-documents" class="app-section hidden">
                     <div class="section-header">
                         <h2>Explorador de Archivos</h2>
@@ -128,11 +177,13 @@
                         </div>
                         <h2 id="current-folder-title" style="flex:1; text-align:center;">Carpeta</h2>
                         
-                        <!-- Acciones Base -->
-                        <div style="display:flex; gap:10px;">
-                            <button class="btn-primary" id="btn-upload-docs" style="display:none;"><ion-icon name="cloud-upload"></ion-icon> Subir Documentos</button>
-                            <button class="btn-primary" id="btn-upload-imgs" style="display:none;"><ion-icon name="images"></ion-icon> Subir Varias Imágenes</button>
-                            <button class="btn-primary" id="btn-new-note-item" style="display:none;"><ion-icon name="add"></ion-icon> Crear Nota</button>
+                            <!-- Acciones Base -->
+                            <div style="display:flex; gap:10px;">
+                                <button class="btn-primary" id="btn-upload-docs" style="display:none;"><ion-icon name="cloud-upload"></ion-icon> Subir Docs</button>
+                                
+                                <button class="btn-primary" id="btn-upload-imgs" style="display:none;"><ion-icon name="images"></ion-icon> Subir Varias Imágenes</button>
+                                
+                                <button class="btn-primary" id="btn-new-note-item" style="display:none;"><ion-icon name="add"></ion-icon> Crear Nota</button>
                             
                             <div style="width: 1px; height: 30px; background: rgba(255,255,255,0.2); margin: 0 5px; align-self:center;"></div>
                             
@@ -188,15 +239,119 @@
                         <p id="conv-sel-file" style="font-size:14px; color:var(--text-muted); margin-bottom: 30px;">(Ninguno seleccionado)</p>
                         
                         <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; max-width: 400px; margin: 0 auto;" id="conv-options-box" class="hidden">
-                            <button class="btn-secondary conv-opt" data-type="img-jpeg" style="width:45%">A Jpeg</button>
-                            <button class="btn-secondary conv-opt" data-type="img-png" style="width:45%">A Png</button>
+                            <button class="btn-secondary conv-opt" data-type="img-jpeg" style="width:45%">A JPG</button>
+                            <button class="btn-secondary conv-opt" data-type="img-png" style="width:45%">A PNG</button>
                             <button class="btn-secondary conv-opt" data-type="img-webp" style="width:45%">A WebP</button>
                             <button class="btn-secondary conv-opt" data-type="img-svg" style="width:45%">A Svg</button>
+                            <button class="btn-secondary conv-opt" data-type="img-pptx" style="width:45%">A PPTX</button>
                             <button class="btn-secondary conv-opt" data-type="txt-word" style="width:45%">A Word</button>
                             <button class="btn-secondary conv-opt" data-type="txt-pdf" style="width:45%">A PDF</button>
                         </div>
                     </div>
                 </section>
+                
+                <section id="section-pdf-tools" class="app-section hidden">
+                    <h2>Herramientas PDF Offline</h2>
+                    <p style="color:var(--text-muted); margin-bottom: 20px;">Unir, separar y previsualizar PDFs sin conexión.</p>
+                    
+                    <div style="display:flex; gap:20px; align-items: flex-start; height: 60vh; min-height: 400px;">
+                        <div class="glass-panel" style="flex:1; padding: 20px; border-radius: 12px; display:flex; flex-direction:column; height:100%; overflow:hidden;">
+                            <h3 style="margin-bottom: 15px;"><ion-icon name="documents"></ion-icon> Archivos</h3>
+                            <button class="btn-primary" id="btn-pdf-add" style="margin-bottom:15px; flex-shrink:0;"><ion-icon name="add"></ion-icon> Añadir PDF</button>
+                            <div id="pdf-list-container" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding-right:5px;"></div>
+                        </div>
+                        <div class="glass-panel" style="flex:1.5; padding: 20px; border-radius: 12px; display:flex; flex-direction:column; height:100%;">
+                            <h3 style="margin-bottom: 15px;"><ion-icon name="eye"></ion-icon> Páginas</h3>
+                            <div id="pdf-preview-container" style="flex:1; background:rgba(0,0,0,0.5); border-radius:8px; overflow-y:auto; display:grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding:15px; border: 1px solid var(--glass-border); align-content: flex-start;">
+                                <div style="color:var(--text-muted); grid-column: 1 / -1; text-align:center;">Selecciona un PDF en la lista para escanear sus páginas.</div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-top:15px; align-items:center;">
+                                <span id="pdf-selection-info" style="font-size:12px; color:var(--text-muted); font-weight:bold;">0 hojas seleccionadas</span>
+                                <div style="display:flex; gap:10px;">
+                                    <button class="btn-secondary danger" id="btn-pdf-delete-selected" style="width:auto; padding:8px 15px; font-size:12px;" title="Eliminar las hojas seleccionadas internamente del PDF activo"><ion-icon name="trash"></ion-icon></button>
+                                    <button class="btn-primary" id="btn-pdf-export-selected" style="width:auto; padding:8px 15px; font-size:12px;" title="Exportar las hojas seleccionadas como un nuevo PDF"><ion-icon name="download"></ion-icon> Exportar Selección</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-panel" style="width: 200px; padding: 20px; border-radius: 12px; height:100%; display:flex; flex-direction:column;">
+                            <h3 style="margin-bottom: 15px;"><ion-icon name="settings"></ion-icon> Lista</h3>
+                            <p style="font-size:11px; color:var(--text-muted); margin-bottom:15px;">Selecciona páginas en la grilla y expórtalas.</p>
+                            <button class="btn-secondary" id="btn-pdf-merge" style="width:100%; margin-bottom:10px;"><ion-icon name="git-merge"></ion-icon> Unir Todos</button>
+                            <hr style="border-color:var(--glass-border); margin: 20px 0;">
+                            <button class="btn-secondary danger" id="btn-pdf-clear" style="width:100%;"><ion-icon name="trash"></ion-icon> Limpiar</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="section-calendar" class="app-section hidden">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <h2>Calendario y Recordatorios</h2>
+                        <button class="btn-primary" onclick="openCalendarEventModal()"><ion-icon name="add"></ion-icon> Nuevo Evento</button>
+                    </div>
+                    <div style="display:flex; gap:20px; align-items: flex-start;">
+                        <div class="glass-panel" style="flex:2; padding: 20px;">
+                            <div id="calendar-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; font-size:20px; font-weight:bold;">
+                                <button class="btn-secondary" id="cal-prev" style="width:50px"><ion-icon name="chevron-back"></ion-icon></button>
+                                <span id="cal-month-year">...</span>
+                                <button class="btn-secondary" id="cal-next" style="width:50px"><ion-icon name="chevron-forward"></ion-icon></button>
+                            </div>
+                            <div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:10px; text-align:center; font-weight:bold; margin-bottom:10px; color:var(--primary-color);">
+                                <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div>
+                            </div>
+                            <div id="calendar-grid" style="display:grid; grid-template-columns: repeat(7, 1fr); gap:10px;">
+                                <!-- JS content -->
+                            </div>
+                        </div>
+                        <div class="glass-panel" style="flex:1; padding: 20px;">
+                            <h3 style="margin-bottom:15px;"><ion-icon name="notifications"></ion-icon> Próximos</h3>
+                            <div id="calendar-events-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="section-calculator" class="app-section hidden">
+                    <h2>Calculadora Vault</h2>
+                    <div style="display:flex; gap:20px; align-items:flex-start;">
+                        <div class="glass-panel calculator">
+                            <div id="calc-display" class="calc-display">0</div>
+                            <div class="calc-keys">
+                                <button class="calc-btn btn-action-sm danger span-2" style="background:rgba(255,68,68,0.2); color:var(--danger); border:1px solid var(--danger);">C</button>
+                                <button class="calc-btn btn-secondary">⌫</button>
+                                <button class="calc-btn op">÷</button>
+                                
+                                <button class="calc-btn">7</button>
+                                <button class="calc-btn">8</button>
+                                <button class="calc-btn">9</button>
+                                <button class="calc-btn op">×</button>
+                                
+                                <button class="calc-btn">4</button>
+                                <button class="calc-btn">5</button>
+                                <button class="calc-btn">6</button>
+                                <button class="calc-btn op">-</button>
+                                
+                                <button class="calc-btn">1</button>
+                                <button class="calc-btn">2</button>
+                                <button class="calc-btn">3</button>
+                                <button class="calc-btn op">+</button>
+                                
+                                <button class="calc-btn span-2">0</button>
+                                <button class="calc-btn">.</button>
+                                <button class="calc-btn op act">=</button>
+                            </div>
+                        </div>
+                        <div class="glass-panel" style="flex:1; padding: 20px; height: 380px; display:flex; flex-direction:column;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--glass-border); padding-bottom:10px;">
+                                <h3>Historial de Cálculos</h3>
+                                <div>
+                                    <button class="btn-secondary btn-action-sm" id="btn-export-calc-history" title="Exportar Historial" style="display:inline-block; margin-right:5px; padding: 8px 12px;"><ion-icon name="download"></ion-icon></button>
+                                    <button class="btn-secondary btn-action-sm danger" id="btn-clear-history" title="Limpiar" style="display:inline-block; padding: 8px 12px;"><ion-icon name="trash"></ion-icon></button>
+                                </div>
+                            </div>
+                            <div id="calc-history-list" style="overflow-y:auto; flex:1; padding-right:10px;"></div>
+                        </div>
+                    </div>
+                </section>
+
                 <section id="section-settings" class="app-section hidden">
                     <h2>Ajustes Maestros</h2>
                     <p style="font-size:12px; color:var(--text-muted);" id="settings-save-notice"></p>
@@ -212,16 +367,37 @@
                         <label class="mt-3">Color Primario (Tema Principal)</label>
                         <input type="color" id="setting-theme" class="glass-input" value="#00ffcc" style="width: 100px; height: 40px; padding:0; cursor:pointer;">
                         
+                        
+                        <label class="mt-3">Opacidad de los Paneles (Oscuridad)</label>
+                        <div style="display:flex; gap:10px; align-items: center;">
+                            <input type="range" id="setting-opacity" min="0.1" max="0.95" step="0.05" value="0.65" style="width: 100%; margin:0;">
+                            <span id="opacity-val-lbl" style="min-width: 40px; text-align:right;">65%</span>
+                        </div>
 
+                        <label class="mt-3">Tipografía de la Aplicación</label>
+                        <select id="setting-font" class="glass-input" style="width: 100%; margin:0; padding:12px 16px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,0.5); color:white;">
+                            <option value="Inter">Inter (Predeterminada)</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Roboto">Roboto</option>
+                            <option value="Google Sans, sans-serif">Google Sans</option>
+                            <option value="Montserrat">Montserrat</option>
+                            <option value="Comic Sans MS">Comic Sans</option>
+                        </select>
+                        <label style="display:block; margin-top:15px;">Tema Adicional</label>
+                        <button class="btn-secondary mt-2" id="btn-toggle-light" style="width: 100%;">Modo Claro: Apagado</button>
                         
                         <hr style="border-color:var(--glass-border); margin: 20px 0;">
                         <button class="btn-primary" id="btn-save-appearance">Aplicar Apariencia</button>
                     </div>
                     
-                    <div class="settings-group mt-3" style="border: 1px solid var(--danger); padding: 20px; border-radius: 8px;">
-                        <h3 class="text-danger" style="margin-bottom:15px"><ion-icon name="shield"></ion-icon> Configuración de Seguridad</h3>
-                        <label>Tiempo de Auto-Cierre por Inactividad (Minutos)</label>
-                        <input type="number" id="setting-timeout" class="glass-input" value="5" min="1" max="60">
+                    <div class="settings-group mt-3" style="border: 1px solid var(--glass-border); padding: 20px; border-radius: 8px;">
+                        <h3 style="color: var(--primary-color); margin-bottom: 15px;"><ion-icon name="lock-closed"></ion-icon> Bloqueo y Seguridad</h3>
+                        <div style="display:flex; gap:10px; margin-bottom: 15px; align-items:center;">
+                            <label style="margin:0; width: 180px;">Auto-Cierre Inactividad (Mins):</label>
+                            <input type="number" id="setting-timeout" class="glass-input" value="5" min="1" step="1" style="width: 80px; margin:0">
+                        </div>
+                        <label class="mt-3" style="display:block">Color del Temporizador</label>
+                        <input type="color" id="setting-timer-color" class="glass-input" value="#ff4444" style="width: 100px; height: 40px; padding:0; cursor:pointer;">
                         <button class="btn-primary mt-3" id="btn-save-sec">Aplicar Seguridad</button>
                     </div>
 
@@ -260,9 +436,9 @@
             <input type="text" id="folder-name" placeholder="Nombre">
             <input type="password" id="folder-pass" placeholder="Contraseña de Carpeta (Opcional)">
             
-            <label style="text-align:left; display:block; margin-top:10px; font-size:12px; color:var(--text-muted);">Ícono de Carpeta (Opcional, Subir PC)</label>
+            <label style="text-align:left; display:block; margin-top:10px; font-size:12px; color:var(--text-muted);">Ícono de Carpeta (URL o Imágen de PC)</label>
             <div style="display:flex; gap:10px; margin-bottom: 15px;">
-                <input type="text" id="folder-icon" placeholder="Ícono predeterminado (o foto)" disabled>
+                <input type="text" id="folder-icon" placeholder="https://ejemplo.com/foto.jpg o clic en img">
                 <button class="btn-secondary" id="btn-pick-folder-icon" style="width:80px;"><ion-icon name="image"></ion-icon></button>
             </div>
             
@@ -303,9 +479,58 @@
         </div>
     </div>
 
+    <div id="calendar-day-modal" class="overlay hidden">
+        <div class="glass-panel login-box" style="width: 450px;">
+            <h3 id="day-modal-title" style="margin-bottom:10px;">Eventos del Día</h3>
+            
+            <div id="day-events-list" style="margin-top:20px; margin-bottom: 20px; display:flex; flex-direction:column; gap:10px; max-height:250px; overflow-y:auto; padding-right:10px; text-align:left;">
+                <!-- Eventos del dia inyectados via JS -->
+            </div>
+            
+            <div class="modal-actions mt-3">
+                <button class="btn-secondary" style="flex:1" onclick="document.getElementById('calendar-day-modal').classList.add('hidden')">Cerrar</button>
+                <button class="btn-primary" style="flex:1" id="btn-open-new-event"><ion-icon name="add"></ion-icon> Nuevo Evento</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="calendar-event-modal" class="overlay hidden">
+        <div class="glass-panel login-box" style="width: 450px;">
+            <h3>Nuevo Evento / Recordatorio</h3>
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <input type="date" id="ev-date" style="margin:0;">
+                <input type="time" id="ev-time" style="margin:0;">
+            </div>
+            <input type="text" id="ev-title" placeholder="Título del Evento">
+            <textarea id="ev-notes" class="glass-input" rows="3" placeholder="Notas (Opcional)" style="width:100%; border-radius:8px; border:1px solid var(--glass-border); padding:10px; color:white; background:rgba(0,0,0,0.3); outline:none; font-family:inherit; margin-bottom:15px; resize:none;"></textarea>
+            
+            <div style="margin-bottom:15px;">
+                <label style="font-size:12px; margin-bottom:5px; color:var(--text-muted); display:block;">Sonido de la Notificación</label>
+                <select id="ev-sound" class="glass-input" style="width:100%;">
+                    <option value="beep">Beep Estándar</option>
+                    <option value="bell">Campana Doble</option>
+                    <option value="alarm">Alarma Insistente</option>
+                    <option value="none">Silencioso</option>
+                </select>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="document.getElementById('calendar-event-modal').classList.add('hidden')">Cancelar</button>
+                <button class="btn-primary" id="btn-save-event">Programar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Canvas for converting images -->
     <canvas id="conversion-canvas" class="hidden"></canvas>
 
+    <!-- Bibliotecas Externas Offline -->
+    <script src="node_modules/pdf-lib/dist/pdf-lib.js"></script>
+    <script src="node_modules/jszip/dist/jszip.min.js"></script>
+    <script src="node_modules/pptxgenjs/dist/pptxgen.min.js"></script>
+    <script src="node_modules/pdfjs-dist/build/pdf.min.js"></script>
+    
+    <script src="js/calculator.js"></script>
     <script src="js/renderer.js"></script>
 </body>
 </html>

@@ -5,29 +5,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         globalTimeoutMinutes: 5,
         globalBg: '',
         primaryColor: '#00ffcc',
-        folders: [],   // type: 'doc'
-        albums: [],    // type: 'img'
-        notes: [],     // type: 'note'
+        folders: [],
+        albums: [],
+        notes: [],
         sectionBgs: {},
         panelOpacity: 0.65,
         fontFamily: 'Inter',
-<<<<<<< HEAD
         fontSize: 16,
         timerColor: '#ff4444',
         calendarEvents: [],
+        tasks: [],
         lightMode: false,
         buttonStyle: 'default',
         buttonTextColor: 'black',
         skipLockScreen: false,
         recoveryEmail: '',
-        iconBg: 'rgba(255,255,255,0.03)',
-        iconColor: '#ffffff',
-        trash: []       // papelera funcional
-=======
-        timerColor: '#ff4444',
-        calendarEvents: [],
-        lightMode: false
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
+        trash: []
     };
 
     let secretKey = 'admin'; 
@@ -43,40 +36,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const loaded = JSON.parse(res.data);
                 state = { ...state, ...loaded };
                 if(!state.notes) state.notes = [];
+                if(!state.folders) state.folders = [];
+                if(!state.albums) state.albums = [];
                 if(!state.sectionBgs) state.sectionBgs = {};
-<<<<<<< HEAD
                 if(!state.trash) state.trash = [];
+                if(!state.tasks) state.tasks = [];
+                if(!state.calendarEvents) state.calendarEvents = [];
                 return true; 
             } catch(e) { return false; }
         } else if (res.success && !res.data) {
-            // No DB file yet — first launch, accept any password
-=======
-                return true; 
-            } catch(e) { return false; }
-        } else if (res.success && !res.data) {
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
             return true;
         }
         return false;
     }
 
-<<<<<<< HEAD
     async function saveSecureDB(customMsg = "Guardando...") {
         if(!window.api || !secretKey || isSaving) return;
         isSaving = true;
 
-=======
-    async function saveSecureDB(customMsg = "Procesando Bóveda...") {
-        if(!window.api || !secretKey || isSaving) return;
-        isSaving = true;
-        
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         const loader = document.getElementById('global-loader');
         if(loader) {
             const h2 = loader.querySelector('h2');
             if(h2) h2.innerText = customMsg;
             loader.classList.remove('hidden');
-<<<<<<< HEAD
             loader.style.display = 'flex';
         }
 
@@ -85,40 +67,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
         await new Promise(r => setTimeout(r, 30));
 
-=======
-        }
-        
-        // Timeout para forzar el ciclo de dibujado de Chromium antes de bloquear el hilo
-        await new Promise(r => setTimeout(r, 100));
-        
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         try {
             state.globalTimeoutMinutes = parseInt(state.globalTimeoutMinutes) || 5;
             const dataString = JSON.stringify(state);
             const res = await window.api.saveDB({ dataString, masterPassword: secretKey });
-<<<<<<< HEAD
             if (res && res.error) console.error("IPC Save failed: " + res.error);
-=======
-            if (res && res.error) {
-                console.error("IPC Save failed: " + res.error);
-            }
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
             updateDashboardStats();
+            // Keep WhatsApp bot snapshot fresh
+            if (window.api && window.api.waSetVaultData) {
+                window.api.waSetVaultData({
+                    folders: state.folders, albums: state.albums,
+                    notes: state.notes, calendarEvents: state.calendarEvents, tasks: state.tasks
+                });
+            }
         } catch(e) {
             console.error("Save Error:", e);
         }
-<<<<<<< HEAD
 
         if(loader) {
             loader.classList.add('hidden');
             loader.style.display = '';
         }
         if(window.api && window.api.wakeUp) window.api.wakeUp();
-=======
-        
-        if(loader) loader.classList.add('hidden');
-        if(window.api.wakeUp) await window.api.wakeUp();
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         isSaving = false;
     }
 
@@ -127,7 +97,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.documentElement.style.setProperty('--glass-bg-alpha', state.panelOpacity || 0.65);
         document.documentElement.style.setProperty('--glass-bg', `rgba(20, 20, 20, ${state.panelOpacity || 0.65})`);
         document.documentElement.style.setProperty('--timer-color', state.timerColor || '#ff4444');
-<<<<<<< HEAD
         document.documentElement.style.setProperty('--icon-bg', state.iconBg || 'rgba(255,255,255,0.03)');
         document.documentElement.style.setProperty('--icon-color', state.iconColor || '#ffffff');
         document.body.style.fontFamily = state.fontFamily || 'Inter';
@@ -140,16 +109,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (!el.style.fontSize) el.style.fontSize = '';
         });
         
-=======
-        document.body.style.fontFamily = state.fontFamily || 'Inter';
-        
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         document.getElementById('setting-theme').value = state.primaryColor;
         document.getElementById('setting-opacity').value = state.panelOpacity || 0.65;
         document.getElementById('opacity-val-lbl').innerText = Math.round((state.panelOpacity || 0.65) * 100) + '%';
         document.getElementById('setting-font').value = state.fontFamily || 'Inter';
         document.getElementById('setting-timer-color').value = state.timerColor || '#ff4444';
-<<<<<<< HEAD
         document.getElementById('setting-icon-bg').value = state.iconBg || '#222222';
         document.getElementById('setting-icon-color').value = state.iconColor || '#ffffff';
         document.getElementById('setting-bg').value = state.globalBg || '';
@@ -158,10 +122,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const fsSlider = document.getElementById('setting-fontsize');
         if(fsSlider) { fsSlider.value = fs; document.getElementById('fontsize-val-lbl').innerText = fs + 'px'; }
         
-=======
-        document.getElementById('setting-bg').value = state.globalBg || '';
-        
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         const btnLight = document.getElementById('btn-toggle-light');
         if(state.lightMode) {
             document.body.classList.add('light-mode');
@@ -170,7 +130,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.body.classList.remove('light-mode');
             if(btnLight) btnLight.innerText = "Modo Claro: Apagado";
         }
-<<<<<<< HEAD
 
         // Estilo de botones
         document.body.classList.remove('style-pink', 'style-multicolor', 'btn-text-white', 'btn-text-black');
@@ -209,8 +168,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.body.classList.add('sidebar-multicolor');
         }
         document.documentElement.style.setProperty('--icon-box-color', state.primaryColor);
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
     }
 
     function applyBackground(targetSection) {
@@ -272,7 +229,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-login').addEventListener('click', async () => {
         const input = masterPassword.value.trim();
         if(!input) return alert("Por favor ingresa una contraseña.");
-<<<<<<< HEAD
         handleLogin(input);
     });
 
@@ -286,17 +242,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             state.passwordHash = input;
             
             if(!auto) saveSecureDB();
-=======
-        document.getElementById('login-error').classList.add('hidden');
-        
-        const isNewInstance = !await window.api.readDB('admin').then(r => r.data || !r.success ? false : true); 
-        const success = await loadSecureDB(input);
-
-        if(success || (isNewInstance && input === state.passwordHash)) {
-            secretKey = input;
-            state.passwordHash = input;
-            saveSecureDB();
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
             
             loginOverlay.classList.add('hidden');
             appShell.classList.remove('hidden');
@@ -308,9 +253,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             applyBackground('dashboard');
             startInactivityTimer();
             renderSpaces();
-<<<<<<< HEAD
             renderTrash();
+            renderTasks();
             initDriveUI();
+
+            // Sync vault snapshot to main process for WhatsApp bot commands
+            if (window.api && window.api.waSetVaultData) {
+                window.api.waSetVaultData({
+                    folders: state.folders, albums: state.albums,
+                    notes: state.notes, calendarEvents: state.calendarEvents, tasks: state.tasks
+                });
+            }
 
             if(state.skipLockScreen && !auto) {
                 await window.api.saveAutologin({ masterPassword: secretKey, enabled: true });
@@ -329,12 +282,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             handleLogin(res.data.masterPassword, true);
         }
     })();
-=======
-        } else {
-            document.getElementById('login-error').classList.remove('hidden');
-        }
-    });
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
 
     document.getElementById('btn-lock').addEventListener('click', lockApp);
 
@@ -353,6 +300,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('current-section-title').innerText = link.innerText.trim();
             
             applyBackground(currentNavTarget);
+
+            // Re-render sections that need fresh data on every visit
+            if(currentNavTarget === 'calendar') renderCalendar();
+            if(currentNavTarget === 'tasklist') renderTasks();
         });
     });
 
@@ -388,7 +339,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('folder-pass').value = '';
         document.getElementById('folder-bg').value = '';
         document.getElementById('folder-icon').value = mode === 'folder' ? 'folder' : (mode === 'album' ? 'images' : 'journal');
-<<<<<<< HEAD
         
         const driveOpt = document.getElementById('drive-link-option');
         if(driveOpt) {
@@ -396,8 +346,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             else driveOpt.classList.remove('hidden');
         }
         
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         document.getElementById('edit-folder-modal').classList.remove('hidden');
     }
 
@@ -412,7 +360,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('folder-pass').value = s.password || "";
         document.getElementById('folder-bg').value = s.bg || "";
         document.getElementById('folder-icon').value = s.icon || "";
-<<<<<<< HEAD
 
         // Mostrar estado de vinculacion Drive y opcion de desvincular
         const driveOpt = document.getElementById('drive-link-option');
@@ -424,8 +371,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if(driveUnlinkBtn) driveUnlinkBtn.style.display = s.driveFolderId ? 'flex' : 'none';
         }
 
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         document.getElementById('edit-folder-modal').classList.remove('hidden');
     });
 
@@ -440,7 +385,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if(res.success) document.getElementById('folder-bg').value = res.files[0].dataURL;
     });
 
-<<<<<<< HEAD
     document.getElementById('btn-folder-save').addEventListener('click', async () => {
         const name = document.getElementById('folder-name').value;
         if(!name) return;
@@ -450,21 +394,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if(!editingSpace) {
             const newSpace = {
-=======
-    document.getElementById('btn-folder-save').addEventListener('click', () => {
-        const name = document.getElementById('folder-name').value;
-        if(!name) return;
-
-        const spaceArr = viewMode === 'folder' ? state.folders : (viewMode === 'album' ? state.albums : state.notes);
-        if(!editingSpace) {
-            spaceArr.push({
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                 id: viewMode + '_' + Date.now(),
                 name: name,
                 password: document.getElementById('folder-pass').value,
                 bg: document.getElementById('folder-bg').value,
                 icon: document.getElementById('folder-icon').value,
-<<<<<<< HEAD
                 driveFolderId: null,
                 docs: [], imgs: [], noteItems: []
             };
@@ -481,10 +415,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
             }
-=======
-                docs: [], imgs: [], noteItems: []
-            });
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         } else {
             const s = spaceArr.find(x => x.id === currentSpaceId);
             if(s) {
@@ -493,7 +423,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 s.bg = document.getElementById('folder-bg').value;
                 s.icon = document.getElementById('folder-icon').value;
                 document.getElementById('current-folder-title').innerText = s.name;
-<<<<<<< HEAD
 
                 if(wantsDrive && !s.driveFolderId) {
                     const driveStatus = await window.api.driveStatus();
@@ -502,14 +431,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                         if(res.success) { s.driveFolderId = res.folderId; showToast("Carpeta vinculada a Drive."); }
                     }
                 }
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
             }
         }
         saveSecureDB(); renderSpaces();
         if(currentSpaceId) {
             const updated = spaceArr.find(x => x.id === currentSpaceId);
-<<<<<<< HEAD
             if(updated) enterSpace(updated, true);
         }
         document.getElementById('edit-folder-modal').classList.add('hidden');
@@ -538,13 +464,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-=======
-            enterSpace(updated, true); // reapply BG if editing active space
-        }
-        document.getElementById('edit-folder-modal').classList.add('hidden');
-    });
-
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
     const catPasswordModal = document.getElementById('cat-password-modal');
     let pendingSpaceUnlock = null;
 
@@ -568,14 +487,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 iconHtml = `<ion-icon name="${item.icon || 'folder'}" class="main-icon"></ion-icon>`;
             }
 
-<<<<<<< HEAD
             const driveBadge = item.driveFolderId
                 ? `<span title="Vinculada a Google Drive" style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.7);border-radius:4px;padding:2px 4px;display:flex;align-items:center;"><svg width="12" height="12" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg></span>`
                 : '';
             card.innerHTML = `${iconHtml}<br><span>${item.name}</span>${item.password ? '<ion-icon name="lock-closed" class="cat-lock"></ion-icon>' : ''}${driveBadge}`;
-=======
-            card.innerHTML = `${iconHtml}<br><span>${item.name}</span>${item.password ? '<ion-icon name="lock-closed" class="cat-lock"></ion-icon>' : ''}`;
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
             
             if(isDashSelecting && dashSelectType === mode) {
                 card.classList.add('selectable-item');
@@ -746,7 +661,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if(res.success && res.files) appendFilesToSpace(res.files, 'imgs');
     });
 
-<<<<<<< HEAD
     async function appendFilesToSpace(files, listType) {
         const spaceArr = viewMode === 'folder' ? state.folders : state.albums;
         const s = spaceArr.find(x => x.id === currentSpaceId);
@@ -756,20 +670,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             newItems.push({ id: Date.now()+Math.random(), name: f.name, data: f.dataURL, driveFileId: null });
         });
         s[listType].push(...newItems);
-=======
-    function appendFilesToSpace(files, listType) {
-        const spaceArr = viewMode === 'folder' ? state.folders : state.albums;
-        const s = spaceArr.find(x => x.id === currentSpaceId);
-        s[listType] = s[listType] || [];
-        files.forEach(f => {
-            s[listType].push({ id: Date.now()+Math.random(), name: f.name, data: f.dataURL });
-        });
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         saveSecureDB();
         renderSpaceItems(s);
     }
 
-<<<<<<< HEAD
     async function uploadFileToDrive(item, space) {
         if(!window.api.driveUpload) return;
         const driveStatus = await window.api.driveStatus();
@@ -799,8 +703,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
     // Export / Delete Security Setup
     let pendingAction = null; 
     
@@ -814,7 +716,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const mimeRaw = pendingAction.data.split(';')[0];
                 const type = mimeRaw.replace('data:', '');
                 const res = await window.api.exportFile({ name: pendingAction.name, dataURL: pendingAction.data, type });
-<<<<<<< HEAD
                 if(res.success) showToast("Archivo exportado exitosamente.");
 
             } else if (pendingAction.type === 'drive-upload-item') {
@@ -883,31 +784,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 saveSecureDB();
                 renderSpaceItems(space); renderTrash();
 
-=======
-                if(res.success) alert("Archivo exportado exitosamente.");
-            } else if (pendingAction.type === 'delete-item') {
-                const spaceArr = viewMode === 'folder' ? state.folders : (viewMode === 'album' ? state.albums : state.notes);
-                const s = spaceArr.find(x => x.id === currentSpaceId);
-                s[pendingAction.listType] = s[pendingAction.listType].filter(i => i.id !== pendingAction.id);
-                saveSecureDB(); renderSpaceItems(s);
-            } else if (pendingAction.type === 'delete-folder') {
-                const spaceArr = viewMode === 'folder' ? state.folders : (viewMode === 'album' ? state.albums : state.notes);
-                const idx = spaceArr.findIndex(x => x.id === currentSpaceId);
-                spaceArr.splice(idx, 1);
-                saveSecureDB();
-                document.getElementById('btn-back-folders').click();
-                renderSpaces();
-            } else if (pendingAction.type === 'delete-note') {
-                const space = state.notes.find(x => x.id === currentSpaceId);
-                space.noteItems = space.noteItems.filter(x => x.id !== pendingAction.id);
-                saveSecureDB();
-                renderSpaceItems(space);
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
             } else if (pendingAction.type === 'delete-multi') {
                 const spaceArr = viewMode === 'folder' ? state.folders : (viewMode === 'album' ? state.albums : state.notes);
                 const s = spaceArr.find(x => x.id === currentSpaceId);
                 const lType = viewMode === 'folder' ? 'docs' : (viewMode === 'album' ? 'imgs' : 'noteItems');
-<<<<<<< HEAD
                 if(!state.trash) state.trash = [];
                 for(const id of pendingAction.ids) {
                     const item = s[lType].find(i => String(i.id) === String(id));
@@ -947,25 +827,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const btnDel = document.querySelector(`.btn-dash-del[data-type="${t}"]`);
                 if(btnDel) btnDel.innerHTML = `<ion-icon name="trash"></ion-icon> (0)`;
                 saveSecureDB(); renderSpaces(); renderTrash();
-=======
-                
-                s[lType] = s[lType].filter(i => !pendingAction.ids.includes(i.id));
-                selectedIds.clear();
-                document.getElementById('multi-count').innerText = '0';
-                saveSecureDB();
-                renderSpaceItems(s);
-            } else if (pendingAction.type === 'delete-dash-multi') {
-                const t = pendingAction.targetType;
-                if(t === 'folder') state.folders = state.folders.filter(x => !pendingAction.ids.includes(x.id));
-                if(t === 'album') state.albums = state.albums.filter(x => !pendingAction.ids.includes(x.id));
-                if(t === 'note') state.notes = state.notes.filter(x => !pendingAction.ids.includes(x.id));
-                
-                dashSelectedIds.clear();
-                const btnDel = document.querySelector(`.btn-dash-del[data-type="${t}"]`);
-                if(btnDel) btnDel.innerHTML = `<ion-icon name="trash"></ion-icon> (0)`;
-                saveSecureDB();
-                renderSpaces();
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
             }
 
         } else {
@@ -995,7 +856,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             (space.docs || []).forEach(doc => {
                 const d = document.createElement('div');
                 d.className = 'file-item selectable-item ' + (selectedIds.has(doc.id) ? 'selected' : '');
-<<<<<<< HEAD
                 const driveBtn = (doc.driveFileId || viewMode === 'note')
                     ? (viewMode === 'note' ? '' : `<button class="btn-action-sm" style="opacity:0.5; cursor:default;" title="Ya en Drive" disabled>
                         <svg width="14" height="14" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>
@@ -1003,29 +863,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                     : `<button class="btn-action-sm drive-upload-btn" data-doc-id="${doc.id}" title="Subir a Google Drive">
                         <svg width="14" height="14" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>
                        </button>`;
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                 d.innerHTML = `
                     <div class="file-label">
                         <ion-icon name="document-text"></ion-icon><span>${doc.name}</span>
                     </div>
-<<<<<<< HEAD
                     <div style="display:flex; gap:5px; align-items:center;">
                         ${driveBtn}
                         <button class="btn-action-sm" data-export-id="${doc.id}" title="Exportar"><ion-icon name="download"></ion-icon></button>
                         <button class="btn-action-sm danger" data-del-id="${doc.id}" title="Mover a Papelera"><ion-icon name="trash"></ion-icon></button>
-=======
-                    <div style="display:flex; gap:5px;">
-                        <button class="btn-action-sm" onclick="triggerAction('export', {name: '${doc.name}', data: '${doc.data}'}, event)" title="Exportar Extracción"><ion-icon name="download"></ion-icon></button>
-                        <button class="btn-action-sm danger" onclick="triggerAction('delete-item', {id: ${doc.id}, listType: 'docs'}, event)" title="Eliminar Permanente"><ion-icon name="trash"></ion-icon></button>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                     </div>`;
                 
                 d.querySelector('.file-label').addEventListener('click', (e) => {
                     if (isSelecting) toggleSelection(doc.id, d);
                     else window.api.previewDoc({name: doc.name, dataURL: doc.data});
                 });
-<<<<<<< HEAD
                 const exportBtn = d.querySelector(`[data-export-id="${doc.id}"]`);
                 if(exportBtn) exportBtn.addEventListener('click', (e) => { e.stopPropagation(); triggerAction('export', {name: doc.name, data: doc.data}, e); });
                 const delBtn = d.querySelector(`[data-del-id="${doc.id}"]`);
@@ -1038,8 +889,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await uploadFileToDrive(doc, space);
                     renderSpaceItems(space);
                 });
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                 docList.appendChild(d);
             });
         }
@@ -1048,7 +897,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             (space.imgs || []).forEach(img => {
                 const w = document.createElement('div');
                 w.className = 'img-wrap selectable-item ' + (selectedIds.has(img.id) ? 'selected' : '');
-<<<<<<< HEAD
                 const driveSvg = `<svg width="13" height="13" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg"><path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/><path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/><path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/><path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/><path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/><path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/></svg>`;
                 w.innerHTML = `
                     <div class="img-item" style="background-image:url('${img.data}'); position:relative;">
@@ -1059,20 +907,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                             : `<button class="btn-action-sm drive-img-btn" data-img-id="${img.id}" title="Subir a Drive">${driveSvg}</button>`}
                         <button class="btn-action-sm" data-export-img="${img.id}" title="Guardar a PC"><ion-icon name="download"></ion-icon></button>
                         <button class="btn-action-sm danger" data-del-img="${img.id}" title="Mover a Papelera"><ion-icon name="trash"></ion-icon></button>
-=======
-                w.innerHTML = `
-                    <div class="img-item" style="background-image:url('${img.data}')"></div>
-                    <div class="img-actions-bar">
-                        <button class="btn-action-sm" onclick="triggerAction('export', {name: '${img.name}', data: '${img.data}'}, event)" title="Guardar a PC"><ion-icon name="download"></ion-icon></button>
-                        <button class="btn-action-sm danger" onclick="triggerAction('delete-item', {id: ${img.id}, listType: 'imgs'}, event)" title="Destruir"><ion-icon name="trash"></ion-icon></button>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                     </div>
                 `;
                 w.querySelector('.img-item').addEventListener('click', (e) => { 
                     if (isSelecting) toggleSelection(img.id, w);
                     else window.api.previewDoc({name: img.name, dataURL: img.data});
                 });
-<<<<<<< HEAD
                 const expBtn = w.querySelector(`[data-export-img="${img.id}"]`);
                 if(expBtn) expBtn.addEventListener('click', (e) => { e.stopPropagation(); triggerAction('export', {name: img.name, data: img.data}, e); });
                 const delBtn = w.querySelector(`[data-del-img="${img.id}"]`);
@@ -1085,8 +925,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await uploadFileToDrive(img, space);
                     renderSpaceItems(space);
                 });
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                 imgList.appendChild(w);
             });
         }
@@ -1237,20 +1075,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         state.panelOpacity = parseFloat(document.getElementById('setting-opacity').value);
         state.fontFamily = document.getElementById('setting-font').value;
         state.globalBg = document.getElementById('setting-bg').value;
-<<<<<<< HEAD
         state.buttonStyle = document.getElementById('setting-btn-style').value;
         state.buttonTextColor = document.getElementById('setting-btn-text-color').value;
         state.fontSize = parseInt(document.getElementById('setting-fontsize').value) || 16;
         state.timerColor = document.getElementById('setting-timer-color').value;
         state.iconBg = document.getElementById('setting-icon-bg').value;
         state.iconColor = document.getElementById('setting-icon-color').value;
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         applyTheme();
         applyBackground('dashboard');
         saveSecureDB();
         const notice = document.getElementById('settings-save-notice');
-<<<<<<< HEAD
         notice.innerText = "✓ Apariencia guardada.";
         setTimeout(() => notice.innerText = "", 2500);
     });
@@ -1272,10 +1106,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     document.getElementById('setting-icon-color').addEventListener('input', (e) => {
         document.documentElement.style.setProperty('--icon-color', e.target.value);
-=======
-        notice.innerText = "Apariencia guardada.";
-        setTimeout(() => notice.innerText = "", 2000);
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
     });
 
     document.getElementById('btn-toggle-light').addEventListener('click', async () => {
@@ -1288,7 +1118,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('opacity-val-lbl').innerText = Math.round(e.target.value * 100) + '%';
     });
 
-<<<<<<< HEAD
     document.getElementById('btn-save-sec').addEventListener('click', async () => {
         state.globalTimeoutMinutes = parseInt(document.getElementById('setting-timeout').value) || 5;
         state.timerColor = document.getElementById('setting-timer-color').value;
@@ -1306,24 +1135,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const notice = document.getElementById('settings-save-notice');
         notice.innerText = "✓ Seguridad guardada.";
         setTimeout(() => notice.innerText = "", 2500);
-=======
-    document.getElementById('btn-save-sec').addEventListener('click', () => {
-        state.globalTimeoutMinutes = parseInt(document.getElementById('setting-timeout').value) || 5;
-        state.timerColor = document.getElementById('setting-timer-color').value;
-        applyTheme();
-        startInactivityTimer();
-        saveSecureDB();
-        const notice = document.getElementById('settings-save-notice');
-        notice.innerText = "Ajustes de seguridad guardados.";
-        setTimeout(() => notice.innerText = "", 2000);
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
     });
 
     document.getElementById('btn-change-pwd').addEventListener('click', async () => {
         const oldP = document.getElementById('pwd-old').value;
         const newP = document.getElementById('pwd-new').value;
         const confP = document.getElementById('pwd-confirm').value;
-<<<<<<< HEAD
         const notice = document.getElementById('settings-save-notice');
 
         if(oldP !== state.passwordHash && oldP !== secretKey) {
@@ -1359,21 +1176,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         notice.innerText = "✓ Contraseña cambiada con éxito.";
         setTimeout(() => { notice.innerText = ''; notice.style.color = ''; }, 4000);
 
-=======
-        if(oldP !== state.passwordHash && oldP !== secretKey) return alert("Contraseña actual incorrecta.");
-        if(newP !== confP) return alert("Las nuevas contraseñas no coinciden.");
-        if(!newP) return alert("Ingresa una nueva contraseña válida.");
-        state.passwordHash = newP;
-        secretKey = newP;
-        await saveSecureDB();
-        alert("Contraseña Maestra cambiada con éxito.");
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         document.getElementById('pwd-old').value = '';
         document.getElementById('pwd-new').value = '';
         document.getElementById('pwd-confirm').value = '';
     });
 
-<<<<<<< HEAD
     document.getElementById('btn-save-recovery-email').addEventListener('click', async () => {
         const email = document.getElementById('setting-recovery-email').value.trim();
         state.recoveryEmail = email;
@@ -1496,8 +1303,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         showToast("Contraseña restablecida con éxito.");
     });
 
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
     document.getElementById('btn-pick-global-bg').addEventListener('click', async () => {
         const res = await window.api.pickFile({ filters: [{ name: 'Images', extensions: ['jpg', 'png', 'jpeg', 'gif'] }]});
         if(res.success) {
@@ -1653,7 +1458,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.currentPdfPreviewIndex = -1;
     
     // Explicit configuracion para la web worker nativa de electron (local)
-    window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'node_modules/pdfjs-dist/build/pdf.worker.min.js';
+    if(window.pdfjsLib && window.pdfjsLib.GlobalWorkerOptions) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'node_modules/pdfjs-dist/build/pdf.worker.min.js';
+    }
 
     window.previewPdf = async function(index) {
         if(!window.pdfjsLib) return alert("El motor PDF nativo aún está cargando o reportó un error de lectura.");
@@ -1882,7 +1689,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch(e) { console.error(e); alert("Hubo un error interno al crear el PDF unificado."); }
     });
 
-<<<<<<< HEAD
     // ─── Toast notification ───
     function showToast(msg, duration = 3000) {
         let t = document.getElementById('vault-toast');
@@ -2115,8 +1921,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         showToast("Cuenta de Google Drive desconectada.");
     });
 
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
     function updateDashboardStats() {
         let docsCount = state.folders.reduce((acc, f) => acc + (f.docs ? f.docs.length : 0), 0);
         let imgsCount = state.albums.reduce((acc, a) => acc + (a.imgs ? a.imgs.length : 0), 0);
@@ -2163,41 +1967,39 @@ document.addEventListener('DOMContentLoaded', async () => {
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         
-        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        const monthNames = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
         document.getElementById('cal-month-year').innerText = `${monthNames[month]} ${year}`;
         
         const grid = document.getElementById('calendar-grid');
-        grid.innerHTML = '';
+        const frag = document.createDocumentFragment();
         
-        // paddings
-        for(let i=0; i < firstDay; i++) {
-            grid.innerHTML += `<div></div>`;
+        // Padding days
+        for(let i = 0; i < firstDay; i++) {
+            frag.appendChild(document.createElement('div'));
         }
         
         const today = new Date();
-        for(let i=1; i <= daysInMonth; i++) {
+        const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+        for(let i = 1; i <= daysInMonth; i++) {
             const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-            const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
-            
+            const isToday = dateStr === todayStr;
             const eventsForDay = state.calendarEvents.filter(e => e.date === dateStr);
-            const hasEvents = eventsForDay.length > 0;
             
             const el = document.createElement('div');
-            el.style = `padding: 10px; border-radius:8px; border:1px solid var(--glass-border); background: ${isToday ? 'rgba(0,255,204,0.2)' : 'rgba(255,255,255,0.05)'}; cursor:pointer; text-align:center; position:relative; min-height:60px; transition:0.2s`;
-            el.innerHTML = `
-                <div style="font-weight:bold; ${isToday ? 'color:var(--primary-color)' : ''}">${i}</div>
-                ${hasEvents ? `<div style="font-size:10px; color:var(--primary-color); margin-top:5px;">${eventsForDay.length} Eventos</div>` : ''}
-            `;
+            el.style.cssText = `padding:8px;border-radius:8px;border:1px solid var(--glass-border);background:${isToday?'rgba(0,255,204,0.2)':'rgba(255,255,255,0.05)'};cursor:pointer;text-align:center;position:relative;min-height:52px;transition:border-color 0.15s;`;
+            el.innerHTML = `<div style="font-weight:bold;${isToday?'color:var(--primary-color)':''}">${i}</div>${eventsForDay.length?`<div style="font-size:9px;color:var(--primary-color);margin-top:3px;">${eventsForDay.length} ev.</div>`:''}`;
             el.onmouseenter = () => el.style.borderColor = 'var(--primary-color)';
             el.onmouseleave = () => el.style.borderColor = 'var(--glass-border)';
-            
             el.onclick = () => {
                 document.getElementById('ev-date').value = dateStr;
                 openCalendarDayModal(dateStr, eventsForDay);
             };
-            grid.appendChild(el);
+            frag.appendChild(el);
         }
         
+        grid.innerHTML = '';
+        grid.appendChild(frag);
         renderEventsList();
     }
     
@@ -2224,11 +2026,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div style="font-weight:bold; color:var(--primary-color); margin-bottom:5px;">${ev.title}</div>
                     <div style="font-size:12px; color:var(--text-muted);"><ion-icon name="time"></ion-icon> ${ev.time} | <ion-icon name="notifications"></ion-icon> ${ev.sound==='none'?'Silencio':ev.sound}</div>
                     ${ev.notes ? `<div style="font-size:13px; margin-top:5px; border-top:1px solid rgba(255,255,255,0.1); padding-top:5px;">${ev.notes}</div>` : ''}
-<<<<<<< HEAD
                     <button class="delete-btn btn-action-sm danger" style="position:absolute; top:8px; right:8px; border-radius:50%; width:26px; height:26px; min-height:0; padding:0;" onclick="removeCalendarEvent('${ev.id}'); document.getElementById('calendar-day-modal').classList.add('hidden');"><ion-icon name="close"></ion-icon></button>
-=======
-                    <button class="delete-btn btn-action-sm danger" style="position:absolute; top:10px; right:10px; border-radius:50%; width:30px; height:30px;" onclick="removeCalendarEvent('${ev.id}'); document.getElementById('calendar-day-modal').classList.add('hidden');"><ion-icon name="trash"></ion-icon></button>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                 `;
                 list.appendChild(el);
             });
@@ -2316,38 +2114,66 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderEventsList() {
         if(!state.calendarEvents) state.calendarEvents = [];
         const container = document.getElementById('calendar-events-list');
-        container.innerHTML = '';
-        
+        const pastContainer = document.getElementById('calendar-past-list');
+        if(container) container.innerHTML = '';
+        if(pastContainer) pastContainer.innerHTML = '';
+
         const sortedEvents = [...state.calendarEvents].sort((a,b) => {
             return new Date(a.date+'T'+(a.time||'00:00')) - new Date(b.date+'T'+(b.time||'00:00'));
         });
-        
+
         const now = new Date();
-        const upcoming = sortedEvents.filter(e => {
-            const evDate = new Date(e.date+'T'+(e.time||'23:59'));
-            return evDate >= now;
-        }).slice(0, 10);
-        
-        if(upcoming.length === 0) {
-            container.innerHTML = '<div style="color:var(--text-muted); font-size:14px;">No hay eventos próximos.</div>';
-            return;
-        }
-        
-        upcoming.forEach(ev => {
+        const upcoming = sortedEvents.filter(e => new Date(e.date+'T'+(e.time||'23:59')) >= now);
+        const past = sortedEvents.filter(e => new Date(e.date+'T'+(e.time||'23:59')) < now).reverse();
+
+        function makeEventCard(ev) {
             const el = document.createElement('div');
             el.className = 'glass-panel';
-            el.style = "padding: 15px; border-radius: 8px; position:relative;";
+            el.style = 'padding:15px; border-radius:8px; position:relative;';
             el.innerHTML = `
                 <div style="font-weight:bold; color:var(--primary-color); margin-bottom:5px;">${ev.title}</div>
-                <div style="font-size:12px; color:var(--text-muted);"><ion-icon name="calendar"></ion-icon> ${ev.date} ${ev.time ? 'A las '+ev.time : ''}</div>
+                <div style="font-size:12px; color:var(--text-muted);"><ion-icon name="calendar"></ion-icon> ${ev.date} ${ev.time ? 'a las '+ev.time : ''}</div>
                 ${ev.notes ? `<div style="font-size:13px; margin-top:5px; border-top:1px solid rgba(255,255,255,0.1); padding-top:5px;">${ev.notes}</div>` : ''}
-<<<<<<< HEAD
                 <button class="btn-action-sm danger" style="position:absolute; top:8px; right:8px; border-radius:50%; width:26px; height:26px; min-height:0; padding:0;" onclick="removeCalendarEvent('${ev.id}')"><ion-icon name="close"></ion-icon></button>
-=======
-                <button class="btn-action-sm danger" style="position:absolute; top:10px; right:10px; border-radius:50%; width:30px; height:30px;" onclick="removeCalendarEvent('${ev.id}')"><ion-icon name="close"></ion-icon></button>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
             `;
-            container.appendChild(el);
+            return el;
+        }
+
+        if(container) {
+            if(upcoming.length === 0) {
+                container.innerHTML = '<div style="color:var(--text-muted); font-size:14px;">No hay eventos próximos.</div>';
+            } else {
+                upcoming.slice(0,10).forEach(ev => container.appendChild(makeEventCard(ev)));
+            }
+        }
+
+        if(pastContainer) {
+            if(past.length === 0) {
+                pastContainer.innerHTML = '<div style="color:var(--text-muted); font-size:13px;">No hay eventos pasados.</div>';
+            } else {
+                past.slice(0,20).forEach(ev => {
+                    const el = makeEventCard(ev);
+                    el.style = 'padding:15px; border-radius:8px; position:relative; opacity:0.7;';
+                    pastContainer.appendChild(el);
+                });
+            }
+        }
+    }
+
+    // Toggle past events panel
+    const btnPast = document.getElementById('btn-show-past-events');
+    if(btnPast) {
+        let pastVisible = false;
+        btnPast.addEventListener('click', () => {
+            pastVisible = !pastVisible;
+            const pastContainer = document.getElementById('calendar-past-list');
+            if(pastContainer) {
+                pastContainer.style.display = pastVisible ? 'flex' : 'none';
+                btnPast.innerHTML = pastVisible
+                    ? '<ion-icon name="eye-off-outline"></ion-icon> Ocultar'
+                    : '<ion-icon name="time-outline"></ion-icon> Pasados';
+            }
+            renderEventsList();
         });
     }
 
@@ -2398,15 +2224,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         state.calendarEvents.forEach(ev => {
             if(!ev.time || ev.triggered) return;
             const evTime = new Date(ev.date + 'T' + ev.time);
-            
             const diffMs = now - evTime;
             if(diffMs >= 0 && diffMs <= 5 * 60000) {
                 ev.triggered = true;
                 needsSave = true;
                 playBeep(ev.sound || 'beep');
-                setTimeout(() => {
-                    alert(`⏰ NOTIFICACIÓN DE EVENTO ⏰\n\n${ev.title}\n${ev.notes || ''}`);
-                }, 500);
+                setTimeout(() => alert(`⏰ NOTIFICACIÓN DE EVENTO ⏰\n\n${ev.title}\n${ev.notes || ''}`), 500);
             } else if (diffMs > 5 * 60000) {
                 ev.triggered = true;
                 needsSave = true;
@@ -2419,14 +2242,93 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }, 30000);
 
-    // Patch initial load of calendar
-    const origRender = renderSpaces;
-    renderSpaces = function() {
-        origRender();
-        renderCalendar();
+    // ─────────────────────────────────────────────
+    // SISTEMA DE TAREAS
+    // ─────────────────────────────────────────────
+    let taskFilter = 'all';
+
+    function saveTasks() { saveSecureDB(); }
+
+    function renderTasks() {
+        if(!state.tasks) state.tasks = [];
+        const list = document.getElementById('task-list');
+        const emptyMsg = document.getElementById('task-empty-msg');
+        if(!list) return;
+
+        let filtered = state.tasks;
+        if(taskFilter === 'pending') filtered = state.tasks.filter(t => !t.done);
+        if(taskFilter === 'done')    filtered = state.tasks.filter(t => t.done);
+
+        // Clear non-empty items
+        Array.from(list.children).forEach(c => { if(c.id !== 'task-empty-msg') c.remove(); });
+
+        if(filtered.length === 0) {
+            if(emptyMsg) emptyMsg.style.display = '';
+            return;
+        }
+        if(emptyMsg) emptyMsg.style.display = 'none';
+
+        const frag = document.createDocumentFragment();
+        filtered.forEach(task => {
+            const el = document.createElement('div');
+            el.style.cssText = `display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);border-radius:10px;transition:0.2s;${task.done?'opacity:0.5;':''}`;
+
+            const priBadge = task.priority
+                ? `<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:${task.priority==='alta'?'rgba(255,68,68,0.2)':task.priority==='media'?'rgba(255,170,0,0.2)':'rgba(0,255,204,0.1)'};color:${task.priority==='alta'?'#f87171':task.priority==='media'?'#ffba00':'var(--primary-color)'};">${task.priority}</span>`
+                : '';
+
+            el.innerHTML = `
+                <div data-check="${task.id}" style="width:22px;height:22px;border-radius:6px;border:2px solid ${task.done?'var(--primary-color)':'var(--glass-border)'};background:${task.done?'var(--primary-color)':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:0.2s;">
+                    ${task.done?'<ion-icon name="checkmark" style="color:black;font-size:14px;"></ion-icon>':''}
+                </div>
+                <span style="flex:1;font-size:14px;${task.done?'text-decoration:line-through;color:var(--text-muted);':''}">${task.text}</span>
+                ${priBadge}
+                <button data-del-task="${task.id}" class="btn-action-sm danger" style="width:28px;height:28px;min-height:0;padding:0;border-radius:50%;flex-shrink:0;"><ion-icon name="close"></ion-icon></button>
+            `;
+
+            el.querySelector(`[data-check="${task.id}"]`).addEventListener('click', () => {
+                const t = state.tasks.find(x => x.id === task.id);
+                if(t) { t.done = !t.done; saveTasks(); renderTasks(); }
+            });
+            el.querySelector(`[data-del-task="${task.id}"]`).addEventListener('click', (e) => {
+                e.stopPropagation();
+                state.tasks = state.tasks.filter(x => x.id !== task.id);
+                saveTasks(); renderTasks();
+            });
+
+            frag.appendChild(el);
+        });
+        list.appendChild(frag);
     }
 
-<<<<<<< HEAD
+    // Add task
+    const btnAddTask = document.getElementById('btn-add-task');
+    const taskInput = document.getElementById('task-input');
+
+    function addTask() {
+        if(!taskInput) return;
+        const text = taskInput.value.trim();
+        if(!text) return;
+        if(!state.tasks) state.tasks = [];
+        state.tasks.push({ id: 'task_' + Date.now(), text, done: false, createdAt: new Date().toISOString() });
+        taskInput.value = '';
+        saveTasks(); renderTasks();
+    }
+
+    if(btnAddTask) btnAddTask.addEventListener('click', addTask);
+    if(taskInput) taskInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') addTask(); });
+
+    // Filter buttons
+    document.querySelectorAll('.task-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.task-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            taskFilter = btn.getAttribute('data-filter');
+            renderTasks();
+        });
+    });
+
+
     // --- WhatsApp Bot Panel ---
     const waPanel = document.getElementById('wa-panel');
     document.getElementById('btn-whatsapp').addEventListener('click', () => {
@@ -2456,43 +2358,143 @@ document.addEventListener('DOMContentLoaded', async () => {
         waPanel.classList.remove('open');
     });
 
-    document.getElementById('btn-wa-connect').addEventListener('click', async () => {
-        const btn = document.getElementById('btn-wa-connect');
-        const statusEl = document.getElementById('wa-connect-status');
-        const dotEl = document.getElementById('wa-dot');
-        const statusText = document.getElementById('wa-status-text');
-        const qrContainer = document.getElementById('wa-qr-container');
+    // ── WhatsApp Bot — IPC event listeners (push from main) ──────────────
+    const waBtn = document.getElementById('btn-wa-connect');
+    const waDot = document.getElementById('wa-dot');
+    const waStatusText = document.getElementById('wa-status-text');
+    const waQrContainer = document.getElementById('wa-qr-container');
+    const waConnectStatus = document.getElementById('wa-connect-status');
 
-        btn.disabled = true;
-        btn.innerHTML = `<span style="width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;"></span> Generando QR...`;
-        statusEl.innerText = 'Iniciando conexión...';
+    const WA_ICON_SVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
 
-        // Show WA bot status message
-        qrContainer.innerHTML = `
-            <div style="text-align:center; padding:20px; background:rgba(0,0,0,0.3); border-radius:12px; border:1px solid rgba(37,211,102,0.2);">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="#25d366" style="margin-bottom:12px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                <div style="color:white; font-size:14px; font-weight:700; margin-bottom:8px;">Bot de WhatsApp</div>
-                <div style="color:#aaa; font-size:12px; line-height:1.6; margin-bottom:12px;">
-                    El bot requiere conexión activa a internet y configuración adicional del servidor.<br>
-                    Esta función estará disponible en una próxima versión.
-                </div>
-                <div style="background:rgba(37,211,102,0.1); border:1px solid rgba(37,211,102,0.3); border-radius:8px; padding:8px 12px; color:#25d366; font-size:11px;">
-                    ${secretKey ? '✓ Bóveda lista para conectar el bot' : '⚠ Desbloquea la bóveda primero'}
-                </div>
-            </div>
-        `;
+    function waSetUIConnected() {
+        if (waDot) { waDot.className = 'wa-status-dot'; waDot.style.background = '#25d366'; waDot.style.boxShadow = '0 0 8px #25d366'; }
+        if (waStatusText) waStatusText.innerText = '✅ Bot conectado y activo. Escríbete un mensaje a ti mismo en WhatsApp con !ayuda.';
+        if (waBtn) { waBtn.disabled = false; waBtn.innerHTML = WA_ICON_SVG + ' Desconectar Bot'; waBtn.style.background = 'rgba(255,68,68,0.2)'; waBtn.style.borderColor = 'rgba(255,68,68,0.5)'; }
+        if (waConnectStatus) { waConnectStatus.style.color = '#25d366'; waConnectStatus.innerText = ''; }
+        if (waQrContainer) waQrContainer.innerHTML = `<div style="padding:20px;text-align:center;color:#25d366;font-size:13px;font-weight:600;"><div style="font-size:36px;margin-bottom:10px;">✅</div>WhatsApp vinculado correctamente.<br><span style="color:var(--text-muted);font-size:12px;">Escríbete !ayuda para ver comandos.</span></div>`;
+    }
 
-        dotEl.className = 'wa-status-dot';
-        statusText.innerText = 'Próximamente disponible.';
-        statusEl.innerText = 'Bot en desarrollo.';
-        btn.disabled = false;
-        btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Conectar WhatsApp`;
+    function waSetUIDisconnected(msg) {
+        if (waDot) { waDot.className = 'wa-status-dot'; waDot.style.background = '#888'; waDot.style.boxShadow = 'none'; }
+        if (waStatusText) waStatusText.innerText = msg || 'Escanea el código QR con WhatsApp para vincular el bot a tu cuenta.';
+        if (waBtn) { waBtn.disabled = false; waBtn.innerHTML = WA_ICON_SVG + ' Conectar Bot'; waBtn.style.background = ''; waBtn.style.borderColor = ''; }
+        if (waConnectStatus) waConnectStatus.innerText = '';
+        if (waQrContainer) waQrContainer.innerHTML = `<svg width="80" height="80" viewBox="0 0 24 24" fill="#128c7e"><path d="M3 3h7v7H3zm1 1v5h5V4zm1 1h3v3H5zm8-2h7v7h-7zm1 1v5h5V4zm1 1h3v3h-3zM3 13h7v7H3zm1 1v5h5v-5zm1 1h3v3H5zm11 0h2v2h-2zm-3 0h2v2h-2zm3 3h2v2h-2zm-3 3h2v2h-2zm3 0h2v2h-2z"/></svg><div class="wa-qr-placeholder">Presiona <b>"Conectar Bot"</b> para generar el código QR.</div>`;
+    }
 
-        // Note: Real QR requires whatsapp-web.js in Node.js backend
-        // This is the UI placeholder — the actual QR is generated by the IPC handler
-        if(window.api && window.api.wakeUp) window.api.wakeUp();
+    // Recibir QR generado por main.js
+    if (window.api && window.api.onWaQr) {
+        window.api.onWaQr((qrDataUrl) => {
+            if (waQrContainer) {
+                waQrContainer.innerHTML = `
+                    <div style="text-align:center;">
+                        <img src="${qrDataUrl}" style="width:220px;height:220px;border-radius:12px;border:3px solid #25d366;" />
+                        <div style="color:#25d366;font-size:12px;margin-top:10px;font-weight:600;">📱 Escanea con WhatsApp</div>
+                        <div style="color:var(--text-muted);font-size:11px;margin-top:4px;">WhatsApp → ⋮ → Dispositivos Vinculados → Vincular Dispositivo</div>
+                    </div>`;
+            }
+            if (waStatusText) waStatusText.innerText = '⏳ QR generado. Escanéalo con tu teléfono...';
+            if (waConnectStatus) { waConnectStatus.style.color = '#25d366'; waConnectStatus.innerText = 'Esperando escaneo del QR...'; }
+        });
+    }
+
+    // Recibir cambios de estado desde main.js
+    if (window.api && window.api.onWaStatusChange) {
+        window.api.onWaStatusChange((status) => {
+            if (status === 'ready') {
+                waSetUIConnected();
+            } else if (status === 'connecting') {
+                if (waDot) { waDot.style.background = '#ffaa00'; waDot.style.boxShadow = '0 0 8px #ffaa00'; }
+                if (waStatusText) waStatusText.innerText = '⏳ Iniciando bot, generando código QR...';
+            } else if (status === 'auth_failure') {
+                waSetUIDisconnected('❌ Falló la autenticación. Intenta de nuevo.');
+                showToast('Bot WhatsApp: Falló la autenticación.');
+            } else {
+                waSetUIDisconnected('Bot desconectado.');
+            }
+        });
+    }
+
+    // Recibir comandos remotos del bot (ej: eliminar archivos)
+    if (window.api && window.api.onWaCommand) {
+        window.api.onWaCommand(async (cmd) => {
+            if (cmd.action === 'delete-file') {
+                const nameL = cmd.name.toLowerCase();
+                let found = false;
+                state.folders.forEach(f => {
+                    const idx = (f.docs || []).findIndex(d => d.name.toLowerCase().includes(nameL));
+                    if (idx > -1) {
+                        const [removed] = f.docs.splice(idx, 1);
+                        state.trash.push({ ...removed, trashType: 'doc', trashDate: new Date().toISOString() });
+                        found = true;
+                    }
+                });
+                if (found) { saveSecureDB(); showToast(`Bot WA: "${cmd.name}" movido a la papelera.`); }
+            } else if (cmd.action === 'delete-note') {
+                const nameL = cmd.name.toLowerCase();
+                let found = false;
+                state.notes.forEach(n => {
+                    const idx = (n.noteItems || []).findIndex(ni => (ni.title || '').toLowerCase().includes(nameL));
+                    if (idx > -1) { n.noteItems.splice(idx, 1); found = true; }
+                });
+                if (found) { saveSecureDB(); showToast(`Bot WA: Nota "${cmd.name}" eliminada.`); }
+            } else if (cmd.action === 'delete-event') {
+                const nameL = cmd.name.toLowerCase();
+                const before = state.calendarEvents.length;
+                state.calendarEvents = state.calendarEvents.filter(e => !e.title.toLowerCase().includes(nameL));
+                if (state.calendarEvents.length < before) { saveSecureDB(); renderCalendar(); showToast(`Bot WA: Evento "${cmd.name}" eliminado.`); }
+            }
+            // Actualizar snapshot del vault después del cambio
+            if (window.api && window.api.waSetVaultData) {
+                window.api.waSetVaultData({
+                    folders: state.folders, albums: state.albums,
+                    notes: state.notes, calendarEvents: state.calendarEvents, tasks: state.tasks
+                });
+            }
+        });
+    }
+
+    let waBotActive = false;
+
+    waBtn.addEventListener('click', async () => {
+        if (!secretKey) return showToast('Desbloquea la bóveda antes de activar el bot.');
+
+        if (waBotActive) {
+            // Desconectar
+            waBotActive = false;
+            if (waBtn) { waBtn.disabled = true; waBtn.innerHTML = `<span style="width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;"></span> Desconectando...`; }
+            await window.api.waStop();
+            waSetUIDisconnected('Bot desconectado manualmente.');
+            return;
+        }
+
+        // Conectar — primero enviar snapshot del vault a main
+        if (window.api && window.api.waSetVaultData) {
+            await window.api.waSetVaultData({
+                folders: state.folders,
+                albums: state.albums,
+                notes: state.notes,
+                calendarEvents: state.calendarEvents,
+                tasks: state.tasks
+            });
+        }
+
+        waBotActive = true;
+        waBtn.disabled = true;
+        waBtn.innerHTML = `<span style="width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;"></span> Iniciando...`;
+        if (waDot) { waDot.style.background = '#ffaa00'; }
+        if (waStatusText) waStatusText.innerText = '⏳ Iniciando bot de WhatsApp...';
+        if (waQrContainer) waQrContainer.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:20px;font-size:13px;"><span style="width:32px;height:32px;border:3px solid rgba(255,255,255,0.15);border-top-color:#25d366;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;margin-bottom:12px;"></span><br>Preparando bot, espera unos segundos...</div>`;
+        if (waConnectStatus) waConnectStatus.innerText = '';
+
+        const res = await window.api.waStart();
+        if (!res.success) {
+            waBotActive = false;
+            waSetUIDisconnected('❌ Error al iniciar el bot: ' + (res.error || 'error desconocido'));
+            showToast('Error iniciando bot WhatsApp: ' + (res.error || ''));
+        }
+        // El QR llega por onWaQr; el estado 'ready' llega por onWaStatusChange
     });
 
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
 });

@@ -23,27 +23,18 @@
             <p>Bóveda ultra-privada cifrada localmente.</p>
             <input type="password" id="master-password" placeholder="Contraseña Maestra..." autocomplete="off">
             <button id="btn-login" class="btn-primary">Desbloquear Bóveda</button>
-<<<<<<< HEAD
             <div id="login-error" class="hidden text-danger" style="margin-top:10px">Contraseña incorrecta. (Contraseña de prueba: admin)</div>
             <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--glass-border);">
                 <button id="link-forgot-pwd" style="background:transparent; border:none; color:var(--text-muted); font-size:13px; cursor:pointer; padding:6px 12px; border-radius:6px; transition:all 0.2s; width:100%;">¿Has olvidado la contraseña?</button>
             </div>
-=======
-            <div id="login-error" class="hidden text-danger" style="margin-top:10px">Contraseña incorrecta. (Admin: admin)</div>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
         </div>
     </div>
 
     <!-- Global Loader (Anti-Freeze UI) -->
     <div id="global-loader" class="overlay hidden" style="z-index: 10000; flex-direction:column; gap:20px; background: rgba(0,0,0,0.9);">
         <div style="width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-<<<<<<< HEAD
         <h2 style="color:white; text-shadow: 0 0 10px rgba(0,0,0,0.8);">Guardando...</h2>
         <p style="color:var(--text-main); font-size:16px; max-width: 450px; text-align:center;">Por favor espera un momento.</p>
-=======
-        <h2 style="color:white; text-shadow: 0 0 10px rgba(0,0,0,0.8);">Procesando Cambios...</h2>
-        <p style="color:var(--text-main); font-size:16px; max-width: 450px; text-align:center;">Operación criptográfica pesada en curso.<br><br><b>Por favor minimiza y reabre la aplicación</b> para guardar los cambios y refrescar la pantalla interactiva.</p>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
     </div>
 
     <!-- Main Shell -->
@@ -52,14 +43,9 @@
             <div class="brand">
                 <ion-icon name="shield-checkmark"></ion-icon>
                 <span>Vault</span>
-<<<<<<< HEAD
                 <div style="display:flex; align-items:center; gap:6px; margin-left:auto;">
                 <button id="btn-lock" title="Bloquear" style="
                     background:rgba(255,68,68,0.15);
-=======
-                <button id="btn-lock" title="Bloquear" style="
-                    margin-left:auto; background:rgba(255,68,68,0.15);
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                     border:1px solid rgba(255,68,68,0.4); color:#f87171;
                     border-radius:8px; width:34px; height:34px;
                     display:flex; align-items:center; justify-content:center;
@@ -67,7 +53,6 @@
                 ">
                     <ion-icon name="lock-closed" style="font-size:16px;"></ion-icon>
                 </button>
-<<<<<<< HEAD
                 <button id="btn-whatsapp" title="Bot de WhatsApp">
                     <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -106,58 +91,16 @@
                 </li>
                 <li data-target="tasklist">
                     <div class="icon-box"><ion-icon name="checkmark-done"></ion-icon></div>
-=======
-            </div>
-            <ul class="nav-links">
-                <li data-target="dashboard" class="active">
-                    <div class="icon-box" style="background: linear-gradient(135deg, #f4a261, #e76f51); color: white;"><ion-icon name="grid"></ion-icon></div>
-                    <span>Inicio</span>
-                </li>
-                <li data-target="documents">
-                    <div class="icon-box" style="background: linear-gradient(135deg, #48cae4, #0077b6); color: white;"><ion-icon name="folder-open"></ion-icon></div>
-                    <span>Archivos</span>
-                </li>
-                <li data-target="galleries">
-                    <div class="icon-box" style="background: linear-gradient(135deg, #ffd166, #ff9f1c); color: #442a00;"><ion-icon name="images"></ion-icon></div>
-                    <span>Galería</span>
-                </li>
-                <li data-target="notes">
-                    <div class="icon-box" style="background: linear-gradient(135deg, #06d6a0, #048a81); color: white;"><ion-icon name="journal"></ion-icon></div>
-                    <span>Notas</span>
-                </li>
-                <li data-target="converters">
-                    <div class="icon-box" style="background: linear-gradient(135deg, #ef476f, #b5179e); color: white;"><ion-icon name="sync"></ion-icon></div>
-                    <span>Conversores</span>
-                </li>
-                <li data-target="pdf-tools">
-                    <div class="icon-box" style="background: linear-gradient(135deg, #118ab2, #073b4c); color: white;"><ion-icon name="document"></ion-icon></div>
-                    <span>Herram. PDF</span>
-                </li>
-                <li data-target="calendar">
-                    <div class="icon-box" style="background: linear-gradient(135deg, #f72585, #b5179e); color: white;"><ion-icon name="calendar"></ion-icon></div>
-                    <span>Calendario</span>
-                </li>
-                <li data-target="tasklist">
-                    <div class="icon-box" style="background: linear-gradient(135deg, #9b5de5, #7209b7); color: white;"><ion-icon name="checkmark-done"></ion-icon></div>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                     <span>Tareas</span>
                 </li>
             </ul>
             <div class="sidebar-bottom">
                 <li data-target="settings">
-<<<<<<< HEAD
                     <div class="icon-box"><ion-icon name="settings"></ion-icon></div>
                     <span>Ajustes</span>
                 </li>
                 <li data-target="trash">
                     <div class="icon-box"><ion-icon name="trash"></ion-icon></div>
-=======
-                    <div class="icon-box" style="background: linear-gradient(135deg, #aaa, #555); color: white;"><ion-icon name="settings"></ion-icon></div>
-                    <span>Ajustes</span>
-                </li>
-                <li data-target="trash">
-                    <div class="icon-box" style="background: linear-gradient(135deg, #888, #333); color: white;"><ion-icon name="trash"></ion-icon></div>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                     <span>Papelera</span>
                 </li>
             </div>
@@ -200,7 +143,6 @@
                             <ion-icon name="journal"></ion-icon>
                             <h3 id="stat-notes">0 Notas</h3>
                         </div>
-<<<<<<< HEAD
                         <!-- Drive Mini Panel -->
                         <div class="stat-card" id="drive-mini-panel" style="cursor:pointer; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;" onclick="document.querySelector('[data-target=settings]').click(); setTimeout(()=>document.getElementById('drive-settings-section').scrollIntoView({behavior:'smooth'}),300)">
                             <div style="display:flex; align-items:center; justify-content:center; margin-bottom:5px;">
@@ -211,8 +153,6 @@
                             </div>
                             <div id="drive-profile-pic-mini" class="hidden"></div>
                         </div>
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                     </div>
                     
                     <div class="dashboard-grid mt-3" style="grid-template-columns: 1fr;">
@@ -396,8 +336,12 @@
                             </div>
                         </div>
                         <div class="glass-panel" style="flex:1; padding: 20px;">
-                            <h3 style="margin-bottom:15px;"><ion-icon name="notifications"></ion-icon> Próximos</h3>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                                <h3><ion-icon name="notifications"></ion-icon> Próximos</h3>
+                                <button class="btn-secondary" id="btn-show-past-events" style="font-size:11px; padding:4px 10px;"><ion-icon name="time-outline"></ion-icon> Pasados</button>
+                            </div>
                             <div id="calendar-events-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                            <div id="calendar-past-list" style="display:none; flex-direction:column; gap:10px; margin-top:10px;"></div>
                         </div>
                     </div>
                 </section>
@@ -430,7 +374,6 @@
                 </section>
 
                 <section id="section-settings" class="app-section hidden">
-<<<<<<< HEAD
                     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
                         <h2 style="margin:0;">Ajustes</h2>
                         <span id="settings-save-notice" style="font-size:13px; color:var(--primary-color);"></span>
@@ -552,7 +495,7 @@
                         <input type="email" id="setting-recovery-email" class="glass-input" placeholder="correo@ejemplo.com" style="width:100%;margin-bottom:10px;">
                         <div id="recovery-email-badge" style="display:none;margin-bottom:12px;" class="linked-badge">
                             <span class="dot"></span>
-                            <span id="recovery-email-display">correo@ejemplo.com</span>
+                            <span id="recovery-email-display"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f7949885859298b7929d929a879b98d994989a">[email&#160;protected]</a></span>
                         </div>
                         <button class="btn-primary" id="btn-save-recovery-email"><ion-icon name="checkmark"></ion-icon> Guardar Correo</button>
                     </div>
@@ -567,72 +510,6 @@
                             <input type="password" id="pwd-confirm" placeholder="Confirmar Nueva..." autocomplete="off" style="margin:0;">
                         </div>
                         <button class="btn-primary" id="btn-change-pwd"><ion-icon name="shield-checkmark"></ion-icon> Cambiar y Guardar</button>
-=======
-                    <h2>Ajustes Maestros</h2>
-                    <p style="font-size:12px; color:var(--text-muted);" id="settings-save-notice"></p>
-                    
-                    <div class="settings-group mt-3" style="border: 1px solid var(--glass-border); padding: 20px; border-radius: 8px;">
-                        <h3 style="color: var(--primary-color); margin-bottom: 15px;"><ion-icon name="color-palette"></ion-icon> Aspecto y Apariencia</h3>
-                        <label>Fondo de Bóveda Global (URL o Local)</label>
-                        <div style="display:flex; gap:10px; margin-bottom: 15px;">
-                            <input type="text" id="setting-bg" class="glass-input" placeholder="Ej: #1a1a2e o https://.." style="margin:0;">
-                            <button class="btn-secondary" id="btn-pick-global-bg" style="width:150px;"><ion-icon name="folder-open"></ion-icon> Buscar Local</button>
-                        </div>
-                        
-                        <label class="mt-3">Color Primario (Tema Principal)</label>
-                        <input type="color" id="setting-theme" class="glass-input" value="#00ffcc" style="width: 100px; height: 40px; padding:0; cursor:pointer;">
-                        
-                        
-                        <label class="mt-3">Opacidad de los Paneles (Oscuridad)</label>
-                        <div style="display:flex; gap:10px; align-items: center;">
-                            <input type="range" id="setting-opacity" min="0.1" max="0.95" step="0.05" value="0.65" style="width: 100%; margin:0;">
-                            <span id="opacity-val-lbl" style="min-width: 40px; text-align:right;">65%</span>
-                        </div>
-
-                        <label class="mt-3">Tamaño de Letra</label>
-                        <div style="display:flex; gap:10px; align-items: center;">
-                            <span style="font-size:12px; color:var(--text-muted);">A</span>
-                            <input type="range" id="setting-fontsize" min="12" max="22" step="1" value="16" style="width: 100%; margin:0;">
-                            <span style="font-size:18px; font-weight:bold;">A</span>
-                            <span id="fontsize-val-lbl" style="min-width: 40px; text-align:right;">16px</span>
-                        </div>
-
-                        <label class="mt-3">Tipografía de la Aplicación</label>
-                        <select id="setting-font" class="glass-input" style="width: 100%; margin:0; padding:12px 16px; border-radius:8px; border:1px solid var(--glass-border); background:rgba(0,0,0,0.5); color:white;">
-                            <option value="Inter">Inter (Predeterminada)</option>
-                            <option value="Times New Roman">Times New Roman</option>
-                            <option value="Roboto">Roboto</option>
-                            <option value="Google Sans, sans-serif">Google Sans</option>
-                            <option value="Montserrat">Montserrat</option>
-                            <option value="Comic Sans MS">Comic Sans</option>
-                        </select>
-                        <label style="display:block; margin-top:15px;">Tema Adicional</label>
-                        <button class="btn-secondary mt-2" id="btn-toggle-light" style="width: 100%;">Modo Claro: Apagado</button>
-                        
-                        <hr style="border-color:var(--glass-border); margin: 20px 0;">
-                        <button class="btn-primary" id="btn-save-appearance">Aplicar Apariencia</button>
-                    </div>
-                    
-                    <div class="settings-group mt-3" style="border: 1px solid var(--glass-border); padding: 20px; border-radius: 8px;">
-                        <h3 style="color: var(--primary-color); margin-bottom: 15px;"><ion-icon name="lock-closed"></ion-icon> Bloqueo y Seguridad</h3>
-                        <div style="display:flex; gap:10px; margin-bottom: 15px; align-items:center;">
-                            <label style="margin:0; width: 180px;">Auto-Cierre Inactividad (Mins):</label>
-                            <input type="number" id="setting-timeout" class="glass-input" value="5" min="1" step="1" style="width: 80px; margin:0">
-                        </div>
-                        <label class="mt-3" style="display:block">Color del Temporizador</label>
-                        <input type="color" id="setting-timer-color" class="glass-input" value="#ff4444" style="width: 100px; height: 40px; padding:0; cursor:pointer;">
-                        <button class="btn-primary mt-3" id="btn-save-sec">Aplicar Seguridad</button>
-                    </div>
-
-                    <div class="settings-group mt-3" style="border: 1px solid white; padding: 20px; border-radius: 8px;">
-                        <h3 class="text-main" style="margin-bottom:15px"><ion-icon name="key"></ion-icon> Cambiar Contraseña Maestra</h3>
-                        <p style="font-size: 13px; color: var(--text-muted); margin-bottom:15px;">Cambia tu clave si sientes que fue comprometida. Necesitas conocer la actual.</p>
-                        
-                        <input type="password" id="pwd-old" placeholder="Contraseña Actual..." autocomplete="off">
-                        <input type="password" id="pwd-new" placeholder="Nueva Contraseña..." autocomplete="off">
-                        <input type="password" id="pwd-confirm" placeholder="Confirma la Nueva Contraseña..." autocomplete="off">
-                        <button class="btn-primary" id="btn-change-pwd">Cambiar y Guardar Contraseña</button>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                     </div>
 
                 </section>
@@ -640,14 +517,9 @@
                 <section id="section-trash" class="app-section hidden">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                         <h2><ion-icon name="trash" style="vertical-align:middle; margin-right:8px;"></ion-icon>Papelera</h2>
-<<<<<<< HEAD
                         <button class="btn-secondary danger" id="btn-empty-trash" style="width:auto; padding:10px 20px;"><ion-icon name="flame"></ion-icon> Vaciar Papelera Permanentemente</button>
                     </div>
                     <p style="color:var(--text-muted); font-size:12px; margin-bottom:15px;">Los elementos eliminados se guardan aquí. Puedes restaurarlos o eliminarlos definitivamente.</p>
-=======
-                        <button class="btn-secondary danger" id="btn-empty-trash" style="width:auto; padding:10px 20px;"><ion-icon name="flame"></ion-icon> Vaciar Papelera</button>
-                    </div>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
                     <div class="glass-panel" style="padding:20px; border-radius:12px; min-height:300px;">
                         <div id="trash-list" style="display:flex; flex-direction:column; gap:12px;">
                             <div id="trash-empty-msg" style="text-align:center; color:var(--text-muted); padding:50px 0; font-size:14px;">
@@ -693,7 +565,6 @@
                 <button class="btn-secondary" id="btn-pick-folder-bg" style="width:80px;"><ion-icon name="folder-open"></ion-icon></button>
             </div>
 
-<<<<<<< HEAD
             <div id="drive-link-option" style="margin-top:15px; padding:12px; border-radius:8px; background:rgba(66,133,244,0.08); border:1px solid rgba(66,133,244,0.2);">
                 <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px; color:var(--text-muted); margin-bottom:0;">
                     <input type="checkbox" id="folder-drive-link" style="width:auto; margin:0; cursor:pointer;">
@@ -707,11 +578,6 @@
             <div style="display:flex; gap:10px; margin-top:20px;">
                 <button id="btn-folder-cancel" class="btn-secondary" style="flex:1;">Cancelar</button>
                 <button id="btn-folder-save" class="btn-primary" style="flex:1;">Guardar</button>
-=======
-            <div class="modal-actions mt-3">
-                <button id="btn-folder-cancel" class="btn-secondary">Cancelar</button>
-                <button id="btn-folder-save" class="btn-primary">Guardar</button>
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
             </div>
         </div>
     </div>
@@ -792,7 +658,6 @@
     <script src="node_modules/pdfjs-dist/build/pdf.min.js"></script>
     
 
-<<<<<<< HEAD
     <!-- Recovery Verification Modal -->
     <div id="recovery-modal" class="overlay hidden">
         <div class="glass-panel" style="max-width:420px; width:95%; padding:36px; text-align:center; border-radius:20px; animation:fadeIn 0.3s ease;">
@@ -934,15 +799,17 @@
                 <h4 style="color:#ffaa00;">⚠️ Nota Importante</h4>
                 <div style="font-size:12px; color:var(--text-muted); line-height:1.7;">
                     El bot de WhatsApp requiere que la app VaultSecurity esté <b style="color:white;">abierta y desbloqueada</b> en tu computadora para funcionar. No opera de forma remota si la app está cerrada.<br><br>
-                    La conexión QR puede necesitar renovarse cada ciertos días — es normal en WhatsApp Web.
+                    La conexión QR puede necesitar renovarse cada ci
+                    La conexión QR puede necesitar renovarse cada ciertos días por seguridad de WhatsApp.
                 </div>
             </div>
 
-        </div>
-    </div>
+        </div><!-- end wa-panel-body -->
+    </div><!-- end wa-panel -->
 
-=======
->>>>>>> 48f259ae7b68df077681896294a7c8af8add075e
+    <canvas id="conversion-canvas" style="display:none;"></canvas>
+
+    <script src="js/calculator.js"></script>
     <script src="js/renderer.js"></script>
 </body>
 </html>

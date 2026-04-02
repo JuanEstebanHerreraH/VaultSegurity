@@ -3,14 +3,14 @@ let calcExpression = '';
 let calcEvaluated = false;
 
 document.addEventListener('click', (e) => {
-    if(!e.target.classList.contains('calc-btn')) return;
-    
+    if (!e.target.classList.contains('calc-btn')) return;
+
     const display = document.getElementById('calc-display');
     const historyList = document.getElementById('calc-history-list');
     const val = e.target.innerText;
 
     function updateDisplay(valOverride = null) {
-        if(display) {
+        if (display) {
             display.innerText = valOverride !== null ? valOverride : (calcExpression || '0');
             display.scrollLeft = display.scrollWidth;
         }
@@ -24,7 +24,7 @@ document.addEventListener('click', (e) => {
     }
 
     if (val === '⌫') {
-        if(calcExpression.length > 0) {
+        if (calcExpression.length > 0) {
             // Check if it ends with an operator (e.g. " + ")
             if (calcExpression.endsWith(' ')) {
                 calcExpression = calcExpression.slice(0, -3);
@@ -37,17 +37,17 @@ document.addEventListener('click', (e) => {
     }
 
     if (val === '=') {
-        if(!calcExpression) return;
+        if (!calcExpression) return;
         try {
             let safeExpr = calcExpression.replace(/×/g, '*').replace(/÷/g, '/');
             safeExpr = safeExpr.replace(/([0-9\)])\s*\(/g, '$1*(');
             safeExpr = safeExpr.replace(/\)\s*([0-9\(])/g, ')*$1');
-            
+
             const result = new Function('return ' + safeExpr)();
             let finalRes = Number.isInteger(result) ? result.toString() : parseFloat(result.toFixed(6)).toString();
             if (finalRes === 'NaN' || finalRes === 'Infinity') finalRes = 'Error';
 
-            if(historyList && finalRes !== 'Error') {
+            if (historyList && finalRes !== 'Error') {
                 const div = document.createElement('div');
                 div.innerHTML = `<span style="color:var(--text-muted); font-size:14px; display:block; margin-top:10px;">${calcExpression}</span> 
                                  <span style="color:var(--text-main); font-size:20px; font-weight:bold;">= ${finalRes}</span>`;
@@ -79,34 +79,46 @@ document.addEventListener('click', (e) => {
 });
 
 document.addEventListener('click', async (e) => {
-    if(e.target.closest('#btn-clear-history')) {
+    if (e.target.closest('#btn-clear-history')) {
         const h = document.getElementById('calc-history-list');
-        if(h) h.innerHTML = '';
+        if (h) h.innerHTML = '';
     }
 
-    if(e.target.closest('#btn-export-calc-history')) {
+    if (e.target.closest('#btn-export-calc-history')) {
         const h = document.getElementById('calc-history-list');
-        if(!h || h.children.length === 0) return alert("El historial de cálculos está vacío.");
-        
+        if (!h || h.children.length === 0) return alert("El historial de cálculos está vacío.");
+
         let textLines = ["Historial de Cálculos VaultSecurity\n==================================="];
         Array.from(h.children).forEach(div => {
             textLines.push(div.innerText.trim());
         });
-        
+
         const blobStr = textLines.join('\n\n');
         const b64 = btoa(unescape(encodeURIComponent(blobStr)));
         const dataURL = "data:text/plain;base64," + b64;
-        
+
         try {
-            const res = await window.api.exportFile({ 
+            const res = await window.api.exportFile({
                 name: "Historial_Calculadora_" + Date.now() + ".txt",
                 dataURL: dataURL,
                 type: "text/plain"
             });
-            if(res && res.success) alert("Historial Exportado Exitosamente.");
-        } catch(err) {
+            if (res && res.success) alert("Historial Exportado Exitosamente.");
+        } catch (err) {
             console.error(err);
         }
     }
 });
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -19,7 +19,7 @@
 
 <br>
 
-![Version](https://img.shields.io/badge/versión-2.0.0-00ffcc?style=flat-square&labelColor=0a0a0a)
+![Version](https://img.shields.io/badge/versión-1.3.3-00ffcc?style=flat-square&labelColor=0a0a0a)
 ![License](https://img.shields.io/badge/licencia-MIT-00ffcc?style=flat-square&labelColor=0a0a0a)
 ![Platform](https://img.shields.io/badge/plataforma-Windows-00ffcc?style=flat-square&labelColor=0a0a0a)
 ![Status](https://img.shields.io/badge/estado-Activo-00ffcc?style=flat-square&labelColor=0a0a0a)

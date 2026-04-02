@@ -1,90 +1,333 @@
-# README
+<div align="center">
 
-Welcome to the **VaultSecurity** application!
+<br>
 
-## Tabla de Contenidos
+```
+██╗   ██╗ █████╗ ██╗   ██╗██╗  ████████╗
+██║   ██║██╔══██╗██║   ██║██║  ╚══██╔══╝
+██║   ██║███████║██║   ██║██║     ██║   
+╚██╗ ██╔╝██╔══██║██║   ██║██║     ██║   
+ ╚████╔╝ ██║  ██║╚██████╔╝███████╗██║   
+  ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  
+```
 
-- [Características Principales](#características-principales)
-- [🛡️ Seguridad](#seguridad)
-- [⚙️ Tecnologías](#tecnologías)
-- [⚠️ Advertencia Crítica de Seguridad](#advertencia-crítica-de-seguridad)
+### `S E C U R I T Y`
 
-### Características Principales
+<br>
 
-- 🎭 Personalización Completa
+**La bóveda digital más segura — 100% offline, cifrado AES-256-CBC**
 
-### 🔗 Integración con Google Drive
-- Sincronización opcional con Google Drive
-- Sube archivos y carpetas directamente a tu nube
-- Control total de sincronización desde la app
+<br>
+
+![Version](https://img.shields.io/badge/versión-2.0.0-00ffcc?style=flat-square&labelColor=0a0a0a)
+![License](https://img.shields.io/badge/licencia-MIT-00ffcc?style=flat-square&labelColor=0a0a0a)
+![Platform](https://img.shields.io/badge/plataforma-Windows-00ffcc?style=flat-square&labelColor=0a0a0a)
+![Status](https://img.shields.io/badge/estado-Activo-00ffcc?style=flat-square&labelColor=0a0a0a)
+![Offline](https://img.shields.io/badge/modo-100%25%20Offline-00ffcc?style=flat-square&labelColor=0a0a0a)
+
+<br>
+
+> *⚠️ Contraseña de prueba: `admin` — Cámbiala en Ajustes antes de guardar cualquier dato.*
+
+<br>
+
+</div>
+
+---
+
+## 📑 Tabla de Contenidos
+
+- [¿Qué es VaultSecurity?](#-qué-es-vaultsecurity)
+- [Características Principales](#-características-principales)
+- [Seguridad](#️-seguridad)
+- [Tecnologías](#️-tecnologías)
+- [Instalación](#-instalación)
+- [Guía de Uso](#-guía-de-uso)
+- [Eliminar archivos originales de tu PC](#️-eliminar-archivos-originales-de-tu-pc)
+- [Advertencia de Seguridad](#️-advertencia-crítica-de-seguridad)
+- [Desarrollo](#-desarrollo)
+- [Licencia](#-licencia)
+
+---
+
+## 🔐 ¿Qué es VaultSecurity?
+
+VaultSecurity es una aplicación de escritorio **nativa para Windows** que actúa como una bóveda digital personal. Todo lo que guardas dentro — archivos, imágenes, notas, contraseñas — queda **cifrado con AES-256-CBC** directamente en tu equipo. Sin servidores, sin nube forzada, sin telemetría.
+
+```
+Tu archivo → cifrado AES-256 → vault_encrypted.json en %APPDATA%
+                                        ↑
+                          Nadie puede leer esto sin tu contraseña maestra
+```
+
+---
+
+## 🎯 Características Principales
+
+### 🌐 100% Offline por Diseño
+- Cero conexión a internet requerida para funcionar
+- Protección total contra intercepciones remotas
+- Tu privacidad vive exclusivamente en tu máquina
+
+### 🔒 Gestión de Archivos y Carpetas
+- Carpetas y álbumes con **contraseñas secundarias individuales**
+- Soporte para documentos, imágenes, videos y cualquier tipo de archivo
+- Selección múltiple y eliminación por lotes
+- Sistema de **etiquetas** (🔴 Importante, 🔵 Personal, 💼 Trabajo, 🧾 Facturas...)
+- Búsqueda y filtrado por nombre o etiqueta
 
 ### 🗑️ Papelera Funcional
-- Recycle bin integrado con capacidad de restauración
-- Recupera archivos eliminados accidentalmente
-- Gestión inteligente de espacio
+- Los elementos eliminados van a la papelera antes de borrarse definitivamente
+- **Restaura** archivos eliminados accidentalmente con un clic
+- Vacía la papelera para liberar espacio de forma permanente
+
+### 📝 Bloc de Notas Cifrado
+- Editor de texto enriquecido (negrita, cursiva, listas, colores, fuentes)
+- Guardado automático mientras escribes
+- Exportación nativa a **Microsoft Word (.doc)**
 
 ### 📅 Calendario con Recordatorios
-- Gestor de eventos integrado
-- Alarmas personalizables con sonidos custom
-- Recordatorios programables
+- Crea eventos con fecha, hora y notas
+- Alarmas con sonidos personalizables (beep, campana, alarma, silencio)
+- Vista de próximos eventos directamente en el panel de inicio
+- Filtro por prioridad (Alta, Media, Baja)
 
 ### ✅ Gestor de Tareas
-- Crea y organiza listas de tareas
-- Marca como completadas
-- Integración con calendario
+- Listas de tareas integradas con la app
+- Marca tareas como completadas
+- Filtros: Todas / Pendientes / Completadas
 
-### 📄 Herramientas PDF
-- Fusiona múltiples PDFs en uno
-- Extrae o elimina páginas específicas visualmente
-- Edición avanzada de documentos
+### 📄 Herramientas PDF Avanzadas
+- **Fusiona** múltiples PDFs en un solo archivo
+- **Visualiza** páginas individualmente en una cuadrícula interactiva
+- **Extrae** páginas seleccionadas a un nuevo PDF
+- **Elimina** páginas específicas de un documento
 
-### 🏷️ Sistema de Etiquetado
-- Etiqueta tus archivos (Importante, Personal, Trabajo, Facturas, etc.)
-- Búsqueda rápida por etiquetas
-- Organización inteligente de contenido
+### 🎨 Conversor de Formatos
+- Convierte imágenes a **JPG, PNG, WEBP, SVG**
+- Convierte texto plano `.txt` a **Word** o **PDF imprimible**
+- Procesamiento 100% local, sin servidores externos
 
-### 🎨 Personalización Avanzada de Panel
-- Colores oscuro/claro totalmente personalizables
-- Ajusta opacidad del panel
-- Personaliza colores de iconos
-- Carga fuentes personalizadas
-- Logo personalizable
-- Nombre de marca en sidebar customizable
+### ☁️ Integración con Google Drive *(Opcional)*
+- Conecta tu cuenta de Google de forma opcional
+- Sube archivos y carpetas directamente a tu Drive desde la bóveda
+- Modo **Cloud-Only**: mueve archivos solo a la nube para liberar espacio local
+- Restaurar desde la papelera con re-subida automática a Drive
 
 ### 🔓 Auto-Login
-- Opción de saltar pantalla de bloqueo
-- Acceso rápido y seguro
+- Opción para omitir la pantalla de bloqueo al iniciar
+- Acceso rápido manteniendo la seguridad del cifrado local
 
 ### 🔐 Recuperación de Contraseña
-- Recupera tu contraseña maestra vía email
-- Código de verificación de 6 dígitos
-- Configurable en Ajustes
+- Registra un **email de recuperación** en Ajustes
+- Si olvidas tu contraseña, solicita un **código de 6 dígitos** a tu correo
+- Restablece el acceso sin perder ningún dato
 
-### 🛡️ Seguridad
-|                                   |                                              |
-|-----------------------------------|----------------------------------------------|
-| **Sin la Contraseña Maestra**     | **Recuperación vía Email | Recupera tu contraseña si registraste un email de recuperación**  |
+### 🎭 Personalización Completa
+- Color primario de la interfaz totalmente configurable
+- Color base de paneles y sidebar personalizable (con presets rápidos)
+- Ajuste de opacidad de paneles
+- Colores de iconos y fondo de iconos
+- Fuentes personalizadas (carga tu propia fuente `.ttf/.woff`)
+- Logo de la app personalizable (sidebar + ícono de ventana)
+- Nombre de marca en la sidebar editable
+- Fondos individuales por sección
+- Temporizador de auto-bloqueo configurable
 
-### ⚙️ Tecnologías
-- Encriptación: crypto (Node.js nativo)
-- Manipulación PDF: pdf-lib + pdfjs-dist
-- Integración Cloud:  Google Drive API
-- Compresión:        JSZip
+---
 
-### ⚠️ Advertencia Crítica de Seguridad
-> ### **RECUPERACIÓN DE CONTRASEÑA DISPONIBLE**
+## 🛡️ Seguridad
 
-Si configuraste un **email de recuperación en los Ajustes**, puedes:
-- ✅ Recuperar tu contraseña maestra mediante un código de 6 dígitos
-- ✅ Recibir instrucciones de recuperación en tu email registrado
-- ✅ Restablecer acceso a tus datos de forma segura
+| Aspecto | Detalle |
+|---|---|
+| **Algoritmo** | AES-256-CBC (Estándar Militar / Gubernamental) |
+| **Almacenamiento** | `%APPDATA%\vault_encrypted.json` |
+| **Conectividad** | 100% Offline — sin acceso a internet requerido |
+| **Arquitectura** | Desktop nativa, sin dependencias en la nube |
+| **Contraseña Maestra** | Control total y exclusivo del usuario |
+| **Recuperación** | Vía email de recuperación registrado en Ajustes |
+| **Drive (opcional)** | OAuth2 de Google — nunca almacena tu contraseña de Google |
 
-**Si NO configuraste email de recuperación:**
-- ⚠️ Si olvidas tu contraseña maestra, los datos serán **IRRECUPERABLES**
-- ⚠️ No hay "reset", no hay excepciones. Esta es la naturaleza de la encriptación militar.
+---
+
+## ⚙️ Tecnologías
+
+```
+Runtime:           Electron (Node.js + Chromium)
+Frontend:          Vanilla JavaScript · HTML5 · CSS3
+Encriptación:      crypto — módulo nativo de Node.js (AES-256-CBC)
+Manipulación PDF:  pdf-lib · pdfjs-dist
+Integración Cloud: Google Drive API v3
+Compresión:        JSZip
+Empaquetador:      electron-builder
+Plataforma:        Windows 10 / 11
+```
+
+---
+
+## 📥 Instalación
+
+### 👤 Para Usuarios — Sin Conocimientos Técnicos
+
+1. Ve a la pestaña **[Releases](../../releases)** de este repositorio
+2. Descarga el archivo `VaultSecurity Setup x.x.x.exe`
+3. Ejecuta el instalador y sigue los pasos (Next → Next → Finish)
+4. Abre VaultSecurity desde el menú de inicio
+5. Contraseña inicial: `admin` — **cámbiala de inmediato en Ajustes**
+
+> No necesitas instalar Node.js ni ninguna dependencia adicional. Funciona como cualquier app nativa de Windows.
+
+---
+
+### 👨‍💻 Para Desarrolladores — Acceso al Código Fuente
+
+#### Requisitos Previos
+
+- [Node.js](https://nodejs.org/) v16 o superior
+- [Git](https://git-scm.com/)
+- Editor de código (VS Code recomendado)
+
+#### Pasos
+
+**1. Clonar el repositorio**
+```bash
+git clone https://github.com/JuanEstebanHerreraH/VaultSecurity.git
+cd VaultSecurity
+```
+
+**2. Instalar dependencias**
+```bash
+npm install
+```
+
+**3. Iniciar en modo desarrollo**
+```bash
+npm start
+```
+
+**4. Compilar instalador `.exe`**
+```bash
+npm run dist
+```
+
+El instalador compilado aparecerá en la carpeta `dist/`.
+
+---
+
+## 🗑️ Eliminar Archivos Originales de tu PC
+
+Cuando subes un archivo a VaultSecurity, la app **lee el archivo, lo convierte internamente y guarda su propia copia cifrada** dentro del vault. El archivo original en tu PC queda intacto — son dos copias independientes.
+
+**Si quieres que el archivo original deje de existir en tu equipo**, debes borrarlo tú manualmente:
+
+```
+1. Sube el archivo a VaultSecurity
+2. Confirma que aparece correctamente dentro de la bóveda
+3. Borra el archivo original desde el Explorador de Windows
+4. Vacía la Papelera de Reciclaje de Windows
+```
+
+> VaultSecurity nunca borra archivos de tu sistema operativo de forma automática. Tú tienes el control total.
+
+---
+
+## ⚠️ Advertencia Crítica de Seguridad
+
+### ✅ Recuperación disponible — si la configuraste
+
+Si registraste un **email de recuperación en Ajustes**, puedes recuperar el acceso en cualquier momento:
+
+1. En la pantalla de login, haz clic en *¿Olvidaste tu contraseña?*
+2. Recibirás un código de 6 dígitos en tu correo
+3. Ingrésalo en la app y establece una nueva contraseña maestra
+
+### ❌ Sin email de recuperación — los datos son irrecuperables
+
+> **Si no configuraste recuperación y olvidas tu contraseña maestra, no hay forma de acceder a tus datos.**
+> No hay backdoor, no hay reset remoto. Esta es la naturaleza del cifrado AES-256.
 
 **Recomendaciones:**
-1. 🔐 Configura un email de recuperación en Ajustes inmediatamente
-2. 🔐 Usa una contraseña maestra fuerte (mayúsculas, minúsculas, números, símbolos)
-3. 📋 Mantén tu email de recuperación actualizado
-4. 🧠 Memoriza tu contraseña como medida adicional
+
+```
+✔  Configura un email de recuperación en Ajustes lo antes posible
+✔  Usa una contraseña maestra fuerte (mayúsculas, números, símbolos)
+✔  Guarda una copia de tu contraseña en un lugar seguro fuera del PC
+✔  Mantén tu email de recuperación siempre accesible y actualizado
+```
+
+---
+
+## 👨‍💻 Desarrollo
+
+### Estructura del Proyecto
+
+```
+VaultSecurity/
+├── main.js               ← Proceso principal de Electron
+├── preload.js            ← Bridge seguro IPC entre main y renderer
+├── renderer.js           ← Lógica completa del frontend
+├── index.html            ← Estructura HTML de la app
+├── css/
+│   └── style.css         ← Estilos y temas
+├── js/
+│   └── calculator.js     ← Módulo calculadora
+├── assets/               ← Íconos y recursos estáticos
+├── node_modules/
+│   ├── pdf-lib/          ← Manipulación de PDFs
+│   ├── pdfjs-dist/       ← Renderizado de PDFs
+│   └── jszip/            ← Compresión
+├── package.json
+└── README.md
+```
+
+### Scripts Disponibles
+
+```bash
+npm start        # Inicia en modo desarrollo
+npm run dist     # Compila el instalador .exe para distribución
+```
+
+### Contribuciones
+
+¡Las contribuciones son bienvenidas!
+
+1. Haz fork del repositorio
+2. Crea una rama para tu feature
+   ```bash
+   git checkout -b feature/NuevaFuncionalidad
+   ```
+3. Haz commit de tus cambios
+   ```bash
+   git commit -m "feat: descripción de la nueva funcionalidad"
+   ```
+4. Push a tu rama
+   ```bash
+   git push origin feature/NuevaFuncionalidad
+   ```
+5. Abre un **Pull Request** describiendo los cambios
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia **MIT**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+---
+
+<div align="center">
+
+<br>
+
+```
+[ Tu privacidad no debería depender de que confíes en nadie más que en ti mismo ]
+```
+
+**VaultSecurity** — Cifrado local. Control total. Cero compromisos.
+
+<br>
+
+[⭐ Dale una estrella si el proyecto te fue útil](../../stargazers)
+
+<br>
+
+</div>

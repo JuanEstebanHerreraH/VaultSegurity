@@ -1,123 +1,91 @@
 <div align="center">
 
-# 🔐 VaultSecurity 
+# 🔐 VaultSecurity
 
-**La Bóveda Digital más Segura del Mundo**
+### La Bóveda Digital más Segura del Mundo
 
-*Una aplicación de escritorio 100% offline con encriptación militar AES-256-CBC*
+*Archivos · Notas · Fotos · Videos · Documentos — 100% Offline*
 
-*(Contraseña de prueba: admin, Cambiala en los ajustes de la aplicacíon)*
+---
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Windows](https://img.shields.io/badge/platform-Windows-0078D4.svg)
-![Status](https://img.shields.io/badge/status-Active-brightgreen.svg)
+![Version](https://img.shields.io/badge/versión-1.0.0-blue?style=for-the-badge)
+![Windows](https://img.shields.io/badge/Windows_10%2F11-0078D4?style=for-the-badge&logo=windows&logoColor=white)
+![Electron](https://img.shields.io/badge/Electron-47848F?style=for-the-badge&logo=electron&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![License](https://img.shields.io/badge/licencia-MIT-brightgreen?style=for-the-badge)
 
 </div>
 
 ---
 
-## 📑 Tabla de Contenidos
+## 📌 ¿Qué es VaultSecurity?
 
-- [🎯 Características Principales](#características-principales)
-- [🛡️ Seguridad](#seguridad)
-- [⚙️ Tecnologías](#tecnologías)
-- [📥 Instalación](#instalación)
-- [🚀 Guía de Uso](#guía-de-uso)
-- [⚠️ Advertencia Crítica de Seguridad](#advertencia-crítica-de-seguridad)
-- [👨‍💻 Desarrollo](#desarrollo)
-- [📝 Licencia](#licencia)
+VaultSecurity es una aplicación de escritorio nativa para Windows que protege tus archivos, fotos, videos, documentos y notas personales con encriptación militar **AES-256-CBC**. Funciona **100% offline**, sin ninguna conexión a internet, sin almacenamiento en la nube y sin servidores externos. Todo queda en tu computador y bajo tu control absoluto.
+
+> 🔑 **Contraseña de prueba: `admin`** — Cámbiala en Ajustes antes de guardar información real.
 
 ---
 
-## 🎯 Características Principales
+## 🧩 Características principales
 
-### 🌐 100% Offline
-- **Cero conexión a Internet** por diseño
-- Completamente desconectado de la nube
-- Protección contra intercepciones y hackeos remotos
-- Tu privacidad es totalmente local
-
-### 🔐 Encriptación Militar AES-256-CBC
-- Encriptación a nivel byte de todos tus archivos
-- Estándar militar de máxima seguridad
-- Almacenamiento profundo en `%APPDATA%\vault_encrypted.json`
-- Sin la Contraseña Maestra, los datos son imposibles de recuperar
-
-### 📁 Gestión de Archivos Avanzada
-- Crear carpetas y álbumes con contraseñas secundarias individuales
-- Soporte para fotos, videos y documentos
-- Selección y eliminación múltiple
-- Interfaz intuitiva y segura
-
-### 📝 Bloc de Notas Blindado
-- Soporte de texto enriquecido (RTF)
-- Iteración de HTML para listas, colores y fuentes personalizadas
-- Exportación nativa a **Microsoft Word (.docx)**
-- Edición segura y cifrada
-
-### 🎨 Conversor de Formatos Integrado
-- Convierte imágenes a **JPG, PNG, WEBP,WORD o SVG**
-- Procesamiento 100% local sin subir datos a servidores externos
-- Sin dependencias de terceros
-- Rápido y eficiente
-
-### 🎭 Personalización Completa
-- Cambia fondos de pantalla con imágenes locales
-- Personaliza los colores de la interfaz
-- Configura tiempo de Auto-Bloqueo por inactividad
-- Experiencia visual única y segura
+| Ícono | Función | Descripción |
+|:---:|---|---|
+| 🌐 | **100% Offline** | Cero conexión a internet, cero nube, cero servidores externos |
+| 🔐 | **Encriptación AES-256-CBC** | Estándar militar a nivel byte en todos tus archivos |
+| 📁 | **Gestión de Archivos** | Carpetas con contraseñas secundarias, soporte fotos, videos y docs |
+| 📝 | **Bloc de Notas Blindado** | Texto enriquecido RTF con exportación nativa a Word (.docx) |
+| 🎨 | **Conversor de Formatos** | Convierte imágenes a JPG, PNG, WEBP, Word o SVG — todo local |
+| 🎭 | **Personalización** | Fondos, colores de interfaz y Auto-Bloqueo por inactividad |
+| ⏱️ | **Auto-Bloqueo** | Bloqueo automático configurable tras tiempo de inactividad |
 
 ---
 
 ## 🛡️ Seguridad
 
-| Aspecto | Detalles |
-|--------|---------|
+| Aspecto | Detalle |
+|---|---|
 | **Encriptación** | AES-256-CBC (Estándar Militar) |
-| **Almacenamiento** | Archivo `vault_encrypted.json` en `%APPDATA%` |
-| **Conectividad** | 100% Offline - Cero acceso a Internet |
-| **Arquitectura** | Desktop Nativa sin dependencias en la nube |
-| **Contraseña Maestra** | Control total y exclusivo del usuario |
+| **Almacenamiento** | `%APPDATA%\vault_encrypted.json` — solo en tu equipo |
+| **Conectividad** | 100% Offline — sin acceso a internet por diseño |
+| **Arquitectura** | Desktop nativa sin dependencias en la nube |
+| **Contraseña Maestra** | Control total y exclusivo del usuario — sin recuperación |
 
 ---
 
-## ⚙️ Tecnologías
+## ⚙️ Stack tecnológico
 
 ```
 Frontend:     Vanilla JavaScript + HTML5 + CSS3
 Backend:      Node.js
 Empaquetador: Electron
-Encriptación: crypto (Node.js nativo)
-Plataforma:   Windows 10/11+
+Encriptación: crypto (módulo nativo de Node.js)
+Plataforma:   Windows 10 / 11+
 ```
 
 ---
 
 ## 📥 Instalación
 
-### 👤 Para Usuarios Comunes (Sin Conocimientos Técnicos)
+### 👤 Para usuarios (sin conocimientos técnicos)
 
-*(Contraseña de prueba: admin, Cambiala en los ajustes de la aplicacíon)*
-
-1. Ve a la pestaña **[Releases](../../releases)** en GitHub
-2. Descarga el archivo: `VaultSecurity Setup x.x.x.exe`
+1. Ve a la pestaña **[Releases](../../releases)** de este repositorio
+2. Descarga el archivo: **`VaultSecurity Setup x.x.x.exe`**
 3. Haz doble clic en el instalador
-4. Sigue los pasos de instalación (Next → Next → Finish)
-5. ¡Listo! VaultSecurity estará disponible en tu menú de inicio
+4. Sigue los pasos: Next → Next → Finish
+5. ¡Listo! VaultSecurity aparecerá en tu menú de inicio
 
-**No necesitas instalar Node.js ni nada adicional.** Funciona como cualquier aplicación nativa de Windows.
+**No necesitas instalar Node.js ni nada adicional.** Funciona como cualquier app nativa de Windows.
+
+> 🔑 Contraseña de prueba: **`admin`** — cámbiala en Ajustes al iniciar.
 
 ---
 
-### 👨‍💻 Para Desarrolladores (Acceso al Código Fuente)
+### 👨‍💻 Para desarrolladores (código fuente)
 
-#### Requisitos Previos
-- **Node.js** v16+ ([Descargar aquí](https://nodejs.org/))
-- **Git** ([Descargar aquí](https://git-scm.com/))
-- Un editor de código (VS Code recomendado)
-
-#### Pasos de Instalación
+#### Requisitos previos
+- Node.js v16+ → [Descargar](https://nodejs.org/)
+- Git → [Descargar](https://git-scm.com/)
+- Editor de código (VS Code recomendado)
 
 **1. Clonar el repositorio**
 ```bash
@@ -135,71 +103,71 @@ npm install
 npm start
 ```
 
-**4. Compilar tu propio instalador .exe**
+**4. Compilar el instalador .exe**
 ```bash
 npm run dist
+# Salida: carpeta dist/
 ```
 
-El archivo `.exe` compilado estará en la carpeta `dist/`.
-
 ---
 
-## 🚀 Guía de Uso
+## 🚀 Guía de uso
 
-### Primer Inicio
+### Primer inicio
 1. Abre VaultSecurity
-2. Crea tu **Contraseña Maestra** (recuérdala bien ⚠️)
-3. Comienza a añadir archivos, carpetas y notas
+2. Crea tu **Contraseña Maestra** (guárdala bien ⚠️)
+3. Comienza a añadir archivos, carpetas y notas seguras
 
-### Flujo Básico
-- **Crear Carpeta**: Botón "+" → Asigna contraseña secundaria (opcional)
-- **Subir Archivos**: Arrastra y suelta o haz clic en "Importar"
-- **Notas Seguras**: Accede al bloc de notas y crea contenido enriquecido
-- **Convertir Imágenes**: Selecciona una imagen → Elige formato de destino
-- **Personalizar**: Ajustes → Fondo, Colores, Auto-Bloqueo
+### Flujo básico
+
+| Acción | Pasos |
+|---|---|
+| **Crear carpeta** | Botón "+" → Asigna contraseña secundaria (opcional) |
+| **Subir archivos** | Arrastra y suelta, o clic en "Importar" |
+| **Notas seguras** | Bloc de notas → crea contenido enriquecido → exporta a Word |
+| **Convertir imagen** | Selecciona imagen → elige formato destino → guarda |
+| **Personalizar** | Ajustes → Fondo, Colores, tiempo de Auto-Bloqueo |
 
 ---
 
-## ⚠️ Advertencia Crítica de Seguridad
+## ⚠️ Advertencia crítica de seguridad
 
-> ### 🔴 INFORMACIÓN CRUCIAL
+> ### 🔴 LEE ESTO ANTES DE USAR LA APP
 
-**RECUERDA TU CONTRASEÑA MAESTRA**
+Tu contraseña maestra está cifrada con **AES-256-CBC**. Esto significa:
 
-- ✅ Tu contraseña está cifrada con **AES-256-CBC**
-- ✅ Todos tus datos se almacenan de forma **segura y local**
-- ✅ **NADIE** sin la contraseña maestra puede acceder
+- ✅ **NADIE** sin la contraseña puede acceder a tus datos
+- ✅ Tus datos son completamente locales y privados
+- ❌ **NO existe recuperación de contraseña**
+- ❌ **NO existe reset**
+- ❌ **NO hay excepciones**
 
-**⚠️ PERO RECUERDA:**
-
-> ### **SI OLVIDAS TU CONTRASEÑA MAESTRA, LOS DATOS SON LITERALMENTE IRRECUPERABLES**
-
-No hay "recuperación de contraseña", no hay "reset", no hay excepciones. Esta es la naturaleza de la encriptación militar. Es tu responsabilidad guardar tu contraseña en un lugar seguro.
+> ### ⚠️ SI OLVIDAS TU CONTRASEÑA MAESTRA, LOS DATOS SON IRRECUPERABLES
 
 **Recomendaciones:**
 1. 🔐 Usa una contraseña fuerte (mayúsculas, minúsculas, números, símbolos)
-2. 📋 Guarda una copia en un lugar seguro (no en tu PC)
-3. 🧠 Memorízala si es posible
+2. 📋 Guarda una copia en un lugar físico seguro (no en tu PC)
+3. 🧠 Memorízala
 4. 🔄 Prueba acceder ocasionalmente para confirmar que la recuerdas
 
 ---
 
-## 👨‍💻 Desarrollo
+## 📁 Estructura del proyecto
 
-### Estructura del Proyecto
 ```
 VaultSecurity/
-├── src/
-│   ├── main.js           (Punto de entrada de Electron)
-│   ├── crypto/           (Encriptación AES-256)
-│   ├── ui/               (Interfaz de usuario)
-│   └── modules/          (Funcionalidades principales)
-├── assets/               (Imágenes y recursos)
+├── 📁 src/
+│   ├── main.js               # Punto de entrada de Electron
+│   ├── 📁 crypto/            # Encriptación AES-256
+│   ├── 📁 ui/                # Interfaz de usuario
+│   └── 📁 modules/           # Funcionalidades principales
+├── 📁 assets/                # Imágenes y recursos
 ├── package.json
 └── README.md
 ```
 
-### Scripts Disponibles
+### Scripts disponibles
+
 ```bash
 npm start         # Inicia en modo desarrollo
 npm run dist      # Compila el instalador .exe
@@ -207,13 +175,17 @@ npm run dev       # Modo desarrollo con hot-reload
 npm test          # Ejecuta pruebas unitarias
 ```
 
-### Contribuciones
-Las contribuciones son bienvenidas. Por favor:
-1. Haz fork del proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
+---
+
+## 🤝 Contribuciones
+
+Las contribuciones son bienvenidas. Para contribuir:
+
+1. Haz **fork** del proyecto
+2. Crea tu rama: `git checkout -b feature/NuevaFuncion`
+3. Commit: `git commit -m 'feat: agrega NuevaFuncion'`
+4. Push: `git push origin feature/NuevaFuncion`
+5. Abre un **Pull Request**
 
 ---
 
@@ -227,8 +199,8 @@ Este proyecto está bajo la licencia **MIT**. Ver el archivo [LICENSE](LICENSE) 
 
 ### 🔐 Tu Privacidad es Sagrada
 
-**VaultSecurity** - Donde tu seguridad es nuestra prioridad
+**VaultSecurity** — Donde tu seguridad es nuestra prioridad
 
-[⭐ Dale una estrella si te gustó el proyecto](../../)
+[⭐ Dale una estrella si te fue útil](../../)
 
 </div>
